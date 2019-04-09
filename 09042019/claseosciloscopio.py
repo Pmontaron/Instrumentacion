@@ -2,12 +2,12 @@ import visa
 
 class osciloscopio:
     
-    
+    def __init__(self,on_off):  #Define la propiedad on_off
+        self.on_off=on_off
+        
     def estado(self):   #Define la funcion estado
     
         # No logramos que conteste sin darle argumento a osciloscopio.estado
-        def __init__(self,on_off):  #Define la propiedad on_off
-            self.on_off=on_off
     
         rm = visa.ResourceManager()    # Devuelve todos los recursos conectados 
         a = rm.list_resources()    # arma una tupla con los instrumentos 
@@ -26,8 +26,4 @@ class osciloscopio:
         return on_off , index # Devuelve si esta prendido o no
        
      
-    def nombre(self):
-         
-        b=osciloscopio.estado(1)
-        osc = rm.open_resource(a[b[1]])  # Abre el instrumento
-        print(osc.query('*IDN?'))
+    
