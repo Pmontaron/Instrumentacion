@@ -1,0 +1,2 @@
+https://bastibe.de/2012-11-02-real-time-signal-processing-in-python.html
+http://www.philipzucker.com/recording-audio-in-python/

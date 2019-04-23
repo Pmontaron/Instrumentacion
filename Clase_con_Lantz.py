@@ -90,7 +90,7 @@ class GeneradorFunciones(MessageBasedDriver):
     def SetVoltage(self, voltage, channel = 1): #gen.SetVoltage(2) Vpp
         self.write('SOURce{}:VOLTage:LEVel:IMMediate:AMPLitude {}'.format(channel, voltage))
 
-with GeneradorFunciones.via_usb('C033250') as genfun:
+with GeneradorFunciones.via_usb('C036493') as genfun:
 
     print(genfun.idn())
     print(genfun.GetVoltage)
@@ -118,7 +118,7 @@ class GeneradorFunciones(MessageBasedDriver):
     def voltage(self, voltage, channel = 1): #gen.SetVoltage(2) Vpp
         self.write('SOURce{}:VOLTage:LEVel:IMMediate:AMPLitude {}'.format(channel, voltage))
 
-with GeneradorFunciones.via_usb('C033250') as genfun:
+with GeneradorFunciones.via_usb('C036493') as genfun:
 
     print(genfun.idn())
     print(genfun.voltage)
@@ -127,5 +127,5 @@ with GeneradorFunciones.via_usb('C033250') as genfun:
 
     
 
-log_to_screen(DEBUG)
+#log_to_screen(DEBUG)
     
