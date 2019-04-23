@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 23 16:24:15 2019
+Created on Tue Apr 23 19:39:03 2019
 
-@author: macabre
+@author: Publico
 """
 
 import pyaudio
@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 CHUNK = 1024  # CAntidad de frames por buffer
 FORMAT = pyaudio.paInt16  # SI CAMBIO EL TIPO DE DATO CAMBIAR EL VARIABLE AUDIO
 CHANNELS = 1
-RATE = 44100
-RECORD_SECONDS = 0.001
+RATE = 440
+RECORD_SECONDS = 5
 WAVE_OUTPUT_FILENAME = "output.wav"
  
 p = pyaudio.PyAudio()  # Configura el sistema de PortAudio
@@ -42,31 +42,31 @@ audio, para poder grabar o reproducir audio. Es decir, Configura
 stream = p.open(format=FORMAT,     # Tipos de formato paFloat32, paInt32, paInt24, paInt16, paInt8, paUInt8, paCustomFormat   
                 channels=CHANNELS,  #  Numero de canales
                 rate=RATE,          #  frecuencia de muestreo
-                input=True,   #   Especifica si es un input stream. Defecto = False
+                output = True,   #   Especifica si es un input stream. Defecto = False
                 frames_per_buffer=CHUNK, # Cantidad de frames por buffer
-                input_device_index=1)  # Indice del dispositivo a usar. Si no especifico usa el por defecto y lo ignora si el input es 'False'
+                output_device_index=3)  # Indice del dispositivo a usar. Si no especifico usa el por defecto y lo ignora si el input es 'False'
  
-print("* recording")
+print("* playing")
+
+t = np.linspace(0,RECORD_SECONDS,44100) 
+seno = np.sin(t/440 *2*np.pi)
+
+#frames = []
+data = stream.write(seno)
+#frames.append(data)
+
  
-frames = []
- 
- 
-for i in range(0, int( (RATE / CHUNK) * RECORD_SECONDS)):  # Si el numero es chico como usa la funcion int redondea a cero y no da nada.
-    data = stream.read(CHUNK)  # Lee la data del audio del stream CHUNK
-    frames.append(data)
- 
- 
-print("* done recording")
+print("* done playing")
  
 stream.stop_stream()   # Pausa la grabacion
 stream.close()     # termina el stream
 p.terminate()    # termina la sesion de portaudio
  
-time = []
+#time = []
  
  
-audio = np.fromstring(b''.join(frames),dtype=np.int16)
- 
-t = np.linspace(0,RECORD_SECONDS,num=audio.size)
-plt.plot(t,audio)
-plt.show()
+#audio = np.fromstring(b''.join(frames),dtype=np.int16)
+
+
+#plt.plot(t,data)
+#plt.show()

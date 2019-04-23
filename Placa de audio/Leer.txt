@@ -1,2 +1,8 @@
 https://bastibe.de/2012-11-02-real-time-signal-processing-in-python.html
 http://www.philipzucker.com/recording-audio-in-python/
+
+http://code.activestate.com/recipes/578350-platform-independent-white-noise-generator/
+
+https://markhedleyjones.com/projects/python-tone-generator
+
+http://people.csail.mit.edu/hubert/pyaudio/docs/
