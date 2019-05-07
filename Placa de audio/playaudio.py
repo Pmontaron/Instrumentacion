@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 CHUNK = 1024  # CAntidad de frames por buffer
 FORMAT = pyaudio.paInt16  # SI CAMBIO EL TIPO DE DATO CAMBIAR EL VARIABLE AUDIO
 CHANNELS = 1
-RATE = 440
+RATE = 44100
 RECORD_SECONDS = 5
 WAVE_OUTPUT_FILENAME = "output.wav"
  
@@ -49,7 +49,7 @@ stream = p.open(format=FORMAT,     # Tipos de formato paFloat32, paInt32, paInt2
 print("* playing")
 
 t = np.linspace(0,RECORD_SECONDS,44100) 
-seno = np.sin(t/440 *2*np.pi)
+seno = np.sin(t)
 
 #frames = []
 data = stream.write(seno)

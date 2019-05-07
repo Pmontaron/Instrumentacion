@@ -62,7 +62,7 @@ with GeneradorFunciones.via_usb('C036493') as genfun:
     print(genfun.voltage)
     genfun.voltage = 0.1
 #    print(genfun.power)
-    genfun.frequency = 1000
+    genfun.frequency = 10
     #genfun.shape = ''
     print(genfun.voltage)
 

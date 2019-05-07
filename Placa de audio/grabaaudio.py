@@ -13,7 +13,8 @@ CHUNK = 1024  # CAntidad de frames por buffer
 FORMAT = pyaudio.paInt16  # SI CAMBIO EL TIPO DE DATO CAMBIAR EL VARIABLE AUDIO
 CHANNELS = 1
 RATE = 44100
-RECORD_SECONDS = 0.001
+RECORD_SECONDS = 0.01951232399646889
+
 WAVE_OUTPUT_FILENAME = "output.wav"
  
 p = pyaudio.PyAudio()  # Configura el sistema de PortAudio
@@ -66,6 +67,7 @@ time = []
  
  
 audio = np.fromstring(b''.join(frames),dtype=np.int16)
+#audio = np.fromstring(b''.join(frames),dtype=np.float64)
  
 t = np.linspace(0,RECORD_SECONDS,num=audio.size)
 plt.plot(t,audio)
