@@ -118,12 +118,13 @@ class GeneradorFunciones(MessageBasedDriver):
     def voltage(self, voltage, channel = 1): #gen.SetVoltage(2) Vpp
         self.write('SOURce{}:VOLTage:LEVel:IMMediate:AMPLitude {}'.format(channel, voltage))
 
-with GeneradorFunciones.via_usb('C036493') as genfun:
+with GeneradorFunciones.via_usb('C033250') as genfun:
 
-    print(genfun.idn())
-    print(genfun.voltage)
-    genfun.voltage = 10
-    print(genfun.voltage)
+#    print(genfun.idn())
+#    print(genfun.voltage)
+#    genfun.voltage = 0.01
+#    print(genfun.voltage)
+    genfun.freq
 
     
 
