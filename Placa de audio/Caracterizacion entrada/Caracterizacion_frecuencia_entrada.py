@@ -73,21 +73,21 @@ class GeneradorFunciones(MessageBasedDriver):
 # Armarmos un barrido en frecuencias
     
 f_min = 1
-f_max = 20000    
+f_max = 30000   
 log_f_min = np.log10(f_min)
 log_f_max = np.log10(f_max)
 n = 20 # cantidad de pasos
 #val_paso= (f_max - f_min)/n
 freqs = np.logspace(log_f_min,log_f_max,num=n+1,base=10)
-A = 0.3   # valor de amplitud a utilizar en V
+A = 0.1   # valor de amplitud a utilizar en V
 cant_periodos = 20
-
+RawData=[]
 # Establecemos condiciones para grabar 
 
 CHUNK = 1024  # CAntidad de frames por buffer
 FORMAT = pyaudio.paInt16  # SI CAMBIO EL TIPO DE DATO CAMBIAR EL VARIABLE AUDIO
 CHANNELS = 1
-RATE = 96000  # Usamos esta frecuencia para tener suficientes puntos para frecuencias altas
+RATE = 192000  # Usamos esta frecuencia para tener suficientes puntos para frecuencias altas
 
 # WAVE_OUTPUT_FILENAME = "output.wav"
  
@@ -98,7 +98,8 @@ for index in range(p.get_device_count()):
     
 # El for anterior, busca cuantos aparatos hay conectados y luego los lista
 # especificando cual es cada uno
-
+Wave_Amplitude=[]
+Wave_Amplitude_Deviation=[]
 with GeneradorFunciones.via_usb(serialno) as genfun:
     
     genfun.voltage = A # Amplitud constante 
@@ -141,17 +142,40 @@ audio, para poder grabar o reproducir audio. Es decir, Configura
         stream.close()     # termina el stream
  
         audio = np.frombuffer(b''.join(frames),dtype=np.int16)
+        RawData.append(audio)
         
-        amplitud_medida.append(max(audio))
-        
+#        wave=audio
+#        Average = np.mean(wave)
+#        Data0=abs(wave-Average)
+#        Partial_Amplitude=[]
+#        size=int(len(wave)/(2*i*RECORD_SECONDS))
+#        m=int((size)/2)
+#        print(size)
+#        while m < len(Data0)-size:
+#            if Data0[m] == max(Data0[m-int((size)/3):m+int(size/3)]):
+#                Partial_Amplitude.append(Data0[m])
+#            
+#            m=m+max(1,int(size/10))
+#        Amplitud=np.mean(Partial_Amplitude)
+#        Desvio=np.std(Partial_Amplitude)
+#    
+#        Wave_Amplitude.append(Amplitud)
+#        Wave_Amplitude_Deviation.append(Desvio)
+#        
 #        time.sleep(0.3)
     
-    plt.figure(1)
-    plt.plot(freqs,amplitud_medida)
-    plt.show()
-    plt.figure(2)
+#    plt.figure(1)
+#    plt.loglog(freqs,Wave_Amplitude)
+#    plt.title('Barrido de frecuencia')
+#    plt.xlabel('Frecuencia [Hz]')
+#    plt.ylabel('Amplitud')
+#    plt.show()
+#    plt.figure(2)
     t = np.linspace(0,RECORD_SECONDS,num=audio.size)
     plt.plot(t,audio)
+    plt.title('F = {} Hz'.format(f_max))
+    plt.xlabel('Frecuencia [Hz]')
+    plt.ylabel('Amplitud')
     plt.show()
 
 p.terminate()    # termina la sesion de pyaudio    
