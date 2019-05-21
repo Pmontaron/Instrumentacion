@@ -16,7 +16,10 @@ from lantz import MessageBasedDriver
 
 
 # Definimos una clase osciloscopio con algunos metodos y que herede os de MBD
-class Osciloscopio(MessageBasedDriver): 
+class Osciloscopio(MessageBasedDriver):
+    
+    def __init__(self, color):
+        self.color = color
     
     def idn(self):
         return self.query('*IDN?')
