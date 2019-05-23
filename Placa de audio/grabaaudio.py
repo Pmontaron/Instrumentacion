@@ -74,15 +74,27 @@ plt.plot(t,audio)
 plt.show()
 
 #%%
-# Programa para la calibracion 
+# Con este programa recuperamos los datos del laboratorio a partir del set de datos
 
-Amp=0.3 #volts (voltaje de entrada seteado en el generador de funciones)
+import pyaudio
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+Amp=0.23 #volts (voltaje de entrada seteado en el generador de funciones)
 f= 200
-Raw= Amp*np.sin(2*np.pi*f*(t-t[187580]))
+Raw= Amp*np.sin(2*np.pi*f*t)
 
 
-plt.plot(t,Raw)
+plt.plot(t,Raw, label='Señal Gen. Funciones')
+plt.plot(t,audio/max(audio), label = 'Audio grabado')
+plt.xlabel('tiempo [s]')
+plt.ylabel('Amplitud [cuentas]')
+plt.legend()
+plt.title ('f={}Hz' .format(f), 'Amplitud={} mVpp' .format(Amp))
+plt.show()
 
-plt.plot(t,audio/max(audio))
-
-plt.plot(Raw,audio)
+#%% Con esto buscamos la pendiende de la recta para obtener la calibracipon
+t_mod = np.linspace(0.20,0.25,10000)
+Raw_mod = Amp*np.sin(2*np.pi*f*t)
+plt.plot(Raw_mod,audio/max(audio))
