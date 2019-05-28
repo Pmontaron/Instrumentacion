@@ -108,7 +108,7 @@ with GeneradorFunciones.via_usb(serialno) as genfun:
         # Agrega un canal de input de voltaje analogico y devuelve la cantidad de mediciones pedidas
 
         with ni.Task() as task: 
-            task.ai_channels.add_ai_voltage_chan("{}/{}".format(lista_disp[n_disp],puerto),terminal_config=ni.constants.TerminalConfiguration.RSE)
+            task.ai_channels.add_ai_voltage_chan(("{}/{}".format(lista_disp[n_disp],puerto),"Dev0/ai2",terminal_config=ni.constants.TerminalConfiguration.DIFFERENTIAL)
             task.timing.cfg_samp_clk_timing(10000,sample_mode=ni.constants.AcquisitionType.CONTINUOUS) #seteo la frecuencia de muestreo en 10kHz y que adquiera de forma continua, necesito
             cuentas = task.read(number_of_samples_per_channel=n_cuentas_por_canal)
         RawData.append(cuentas)
@@ -140,6 +140,8 @@ with GeneradorFunciones.via_usb(serialno) as genfun:
 ##
 ##
 ##cuentas=MedxCan_ai(15000)
+        
 t=np.linspace(0,T,T*10000)
-plt.plot(t,RawData[39])
-
+t0=np.linspace(0,T,T*100000)
+plt.plot(t,RawData[0])
+plt.plot(t0,0.2*np.sin(t0*2*np.pi*5000.0))
