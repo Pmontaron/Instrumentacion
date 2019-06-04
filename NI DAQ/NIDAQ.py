@@ -8,10 +8,11 @@ import nidaqmx
 from lantz import Feat
 
 class NIDAQ ():
-    def __init__(self, port=1,Time_Out=10, device_no=0):
+    def __init__(self, port=1,Time_Out=10, device_no=0):#, adq_type='CONTINUOUS'):
         self.port = port
         self.device_no = device_no
-        self.Time_Out= Time_Out
+        self.Time_Out = Time_Out
+#        self.adq_type = adq_type
         '''estos dos renglones que queden en una funcion que solo tenga el nombre del device
         y que sea una propiedad del objeto
         por ejemplo que guarde en self.device_no el numero del dispositivo, sin que el usuario
@@ -41,8 +42,8 @@ class NIDAQ ():
         with nidaqmx.Task() as task: 
             # Port es una lista con los puertos y lo recorro para medir en simultaneo
             for i in self.port: 
-                task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.CONTINUOUS)
                 task.ai_channels.add_ai_voltage_chan("{}/ai{}".format(self.device_list[self.device_no],i),terminal_config=nidaqmx.constants.TerminalConfiguration.NRSE)
+                task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.self.adq_type)
             
             voltaje = task.read(number_of_samples_per_channel = sample_no,timeout=self.Time_Out)
         
@@ -53,19 +54,19 @@ class NIDAQ ():
         with nidaqmx.Task() as task:
             # Port es una lista con los puertos y lo recorro para medir en simultaneo
             for i in self.port: 
-                task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.CONTINUOUS)
                 task.ai_channels.add_ai_voltage_chan("{}/ai{}".format(self.device_list[self.device_no],i),terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
+                task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.self.adq_type)
             voltaje = task.read(number_of_samples_per_channel = sample_no,timeout=self.Time_Out)
         
         return voltaje
     
     
-    def getvoltage_ai_DIFF(self,sample_no,sample_rate):
+    def getvoltage_ai_DIFF(self,sample_no,sample_rate,Samples_per_Channel):
         with nidaqmx.Task() as task:
             # Port es una lista con los puertos y lo recorro para medir en simultaneo
             for i in self.port: 
-                task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.CONTINUOUS)
                 task.ai_channels.add_ai_voltage_chan("{}/ai{}".format(self.device_list[self.device_no],i),terminal_config=nidaqmx.constants.TerminalConfiguration.DIFFERENTIAL)
+                task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.FINITE,samps_per_chan=Samples_per_Channel)
             voltaje = task.read(number_of_samples_per_channel = sample_no,timeout=self.Time_Out)
         return voltaje
     
@@ -98,7 +99,7 @@ class NIDAQ ():
     def samples_per_channel_di(self,linea_inicial,linea_final,sample_no,sample_rate):    
         from nidaqmx.constants import LineGrouping
         with nidaqmx.Task() as task:
-            task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.CONTINUOUS)
+            task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.self.adq_type)
             task.di_channels.add_di_chan("{}/port{}/line{}:{}".format(self.device_list[self.device_no],self.port,linea_inicial,linea_final), line_grouping=LineGrouping.CHAN_PER_LINE)
             cuentas = task.read(number_of_samples_per_channel=sample_no)
         return cuentas
@@ -109,7 +110,7 @@ class NIDAQ ():
     def do_pulse(self,ctr,h_t,l_t,sample_rate):  
         from nidaqmx.types import CtrTime
         with nidaqmx.Task() as task:
-            task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.CONTINUOUS)
+            task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.self.adq_type)
             task.co_channels.add_co_pulse_chan_time(counter="{}/ctr{}".format(self.device_list[self.device_no],ctr),
                                                 low_time=l_t,
                                                 high_time=h_t)
@@ -120,7 +121,7 @@ class NIDAQ ():
     
     def setvoltage_ao(self,data,sample_rate):
         with nidaqmx.Task() as task:
-            task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.CONTINUOUS)
+            task.timing.cfg_samp_clk_timing(sample_rate,sample_mode=nidaqmx.constants.AcquisitionType.self.adq_type)
             task.ao_channels.add_ao_voltage_chan("{}/ao{}".format(self.device_list[self.device_no],self.port))
             task.write(data, auto_start=True)
         return 
