@@ -1,0 +1,5 @@
+class_spec: PIDDRIVER:FLOWPIDDriver
+fqbn: ''
+port: ''
+sketch_folder: D:\Insturmentacion 1C2019\Instrumentacion\Practica especial\FLOWPIDDriver
+usbID: ''

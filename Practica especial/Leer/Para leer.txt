@@ -1,0 +1,45 @@
+
+%%PID control of a LED
+
+https://johnwilliamrussell.wordpress.com/2014/09/21/pid-control-of-a-led/
+
+
+%% Planning and Implementing an Arduino Program
+
+https://forum.arduino.cc/index.php?topic=261445.0
+
+%% Design of a new PID controller based on Arduino Uno R3 with
+application to household refrigerator
+
+https://pdfs.semanticscholar.org/ef2f/b2e8d1d15a92aef0c9a3d3f0dacffeaba66a.pdf
+
+
+%%Development of Arduino Based Flow Control
+System Implenting Fuzzy with PID controller
+
+http://www.ijircce.com/upload/2015/october/65_Development.pdf
+
+
+%% Working with Water Flow Sensors & Arduino
+
+https://www.electroschematics.com/12145/working-with-water-flow-sensors-arduino/
+
+
+%% How to Interface an Arduino With a Flow Rate Sensor to Measure Liquid 
+
+https://maker.pro/arduino/tutorial/how-to-interface-arduino-with-flow-rate-sensor-to-measure-liquid
+
+
+%% Arduino PID Control Tutorial
+
+https://www.teachmemicro.com/arduino-pid-control-tutorial/
+
+
+%%
+
+https://www.youtube.com/watch?v=8GwaCMJBExw
+
+
+%% Motor driver (para conectar las mini pumps)
+
+https://www.teachmemicro.com/use-l298n-motor-driver/

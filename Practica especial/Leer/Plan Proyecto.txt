@@ -1,0 +1,84 @@
+%% Entonces, las funciones que yo quiero escribir adentro del arduino deberia crearlas lantz, por eso es importante escribir bien el 
+driver, yo solo tengo que rellenar en arduino como quiero que funcionen. 
+
+
+%% Armado leyendo el tutorial https://forum.arduino.cc/index.php?topic=261445.0
+
+# Importar librerías de ser necesario. (EL ejemplo es para un motor servo.)
+
+#include <Servo.h>
+
+
+# Operaciones que necesitamos que el arduino realice y que el usuario puede pedir 
+
+Medir caudal
+Setear caudal
+
+	# Para abrir y cerrar valvulas estaría bueno poder establecer en que cantidad se abren o cierran, aunque
+	el sistema de control debería determinar por si mismo cuanto abrir y cerrar. ¿Se pueden tener ambas opciones?
+	¿Una controlada por el usuario pero que una vez que arranque el loop de control lo maneje solo el PID?
+
+Abrir valvula 1/2
+Cerrar valvula 1/2
+
+# Entiendo que estas funciones van a ir tanto en el pyhton como en el arduino, para que puedan tener una conexión con el 
+usuario.
+
+	# En el arduino, las funciones las vamos a tener que definir y luego agregar contenido dentro. Estas funciones
+	# se ubicarán fuera del void loop()
+
+void setflow() {
+}
+
+void getflow() {
+
+	flowValue = digitalRead(flowsensorPin);  // Segun entendi esto devuelve si esta en HIGH O LOW, 
+						 // ¿Cómo hago para que me devuelva un número?
+	
+}
+
+void openvalve1() {
+}
+
+void closevalve1() {
+}
+
+void openvalve2() {
+}
+
+void closevalve2() {
+}
+
+void valve1status() {
+}
+
+void valve2status() {
+}
+
+# Luego debemos dar las instrucciones a seguir dentro del loop
+
+void loop () {
+	
+	setpoint();
+	valve2status();
+	valve1status();
+	
+	getflow();
+	
+#Aca agregaría un if en funcion de como esta el caudal respecto de el set point para poder abrir/cerrar las valvulas. 
+
+}
+
+# Luego armo el void setup(), pero antes cargo las librerías y defino las cosas que voy a utilizar. Seteo además, los
+valores mínimos que puedo tomar de flujo que dependeran de mi aparato. En el caso de usar el de 1-30 L/min
+
+
+const byte flowsensorPin = 5 ;
+const byte flowMin = 1;
+const byte flowMax = 30;
+int flowValue;  // Entiendo que esta linea debería ser para poder medir el valor de caudal
+
+void setup() {
+
+	pinMode (flowsensorPIN , INPUT/OUTPUT);
+} 

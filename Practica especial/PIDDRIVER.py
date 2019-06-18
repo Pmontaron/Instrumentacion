@@ -5,7 +5,7 @@ Created on Tue Jun 11 19:02:27 2019
 @author: Publico
 """
 
-import lantz.ino import INODriver, BoolFeat, QuantityFeat
+from lantz.ino import INODriver, BoolFeat, QuantityFeat, BoolDictFeat, QuantityDictFeat
 from lantz.qt import Backend, Frontend, InstrumentSlot
 
 class FLOWPIDDriver(INODriver):
@@ -16,26 +16,30 @@ class FLOWPIDDriver(INODriver):
         self.Kd = Kd
         self.Set_Point = Set_Point
         
-    control_loop=BoolFeat('CONTROL_LOOP')
-    Kp=QuantityFeat('KP')
-    Ki=QuantityFeat('KI')
-    Kd=QuantityFeat('KD')
-    set_point=QuantityFeat('SET_POINT', units='L')
-    flow_value = QuantityFeat('FLOW_VALUE')
+    control_loop_enabled=BoolFeat('Control_Loop_enabled')
+    Kp=QuantityFeat('Kp')
+    Ki=QuantityFeat('Ki')
+    Kd=QuantityFeat('Kd')
+    set_point=QuantityFeat('Set_Point', units='L/h')
+    flow_value = QuantityFeat('Flow', units = 'L/h') # Si agrego este argumento: setter=False, entonces la funcion en el sketch de Arduino se genera sin setter.
+#    valve_opened = BoolDictFeat('Valve_Opened', keys=(1, 2))
+    pump_flow = QuantityDictFeat('Pump_Flow', keys=(1, 2) , units = 'L/h')
+    
    
-    open_valve_1 = BoolFeat('OPEN_VALVE_1')
-    close_valve_1 = BoolFeat('CLOSE_VALVE_1')
-    open_vavle_2 = BoolFeat('OPEN_VALVE_2')
-    close_valve_2 = BoolFeat('CLOSE_VALVE_2')
- ''' Esto es para obtener el estado de la valvula. Esto esta incluido en las funciones de arriba? '''  
-#    valve_1_status = BoolFeat()
-#    valve_2_status = BoolFeat()
+''' Hay dos maneras de escribir que las valvulas se puedan abrir o cerrar
+en ambos casos conviene ser especifico con lo que hace la función. La primer 
+forma consiste en dar dos funciones distintas, una para cada valvula que valga
+true si esta abierta o false si la quiero cerrar. La otra forma es usar el 
+BoolDictFeat para armar un diccionario entonces ademas de tomar los valores
+True/False, toma los valores 1 o 2 dependiendo de que valvula quiero usar.  '''
+#    valve_1_opened = BoolFeat('OPEN_VALVE_1')
+#    vavle_2_opened = BoolFeat('OPEN_VALVE_2')
+    
+    
+ 
 
 class FLOWPIDBackend(Backend):
-    board: LEDPIDDriver = InstrumentSlot
-
-
-''' Esta bien definido self.board.Kp=self.board.Kp?? ''' 
+    board: FLOWPIDDriver = InstrumentSlot
     def enable_control_loop_method(self):
         self.board.control_loop = True
     
@@ -53,31 +57,42 @@ class FLOWPIDBackend(Backend):
         
     def set_set_point(self):
         self.board.set_point = self.board.Set_Point
-    
-    def open_valve_1_method(self):
-        self.board.open_valve_1 = True
-   
-    def close_valve_1_method(self):
-        self.board.open_valve_1 = False
-
-    def open_valve_2_method(self):
-        self.board.open_valve_1 = True
         
-    def close_valve_2_method(self):
-        self.board.open_valve_1 = False
+#    def open_valve(self,no):
+#        self.board.valve_opened[no]= True
+#
+#    def close_valve(self,no):
+#        self.board.valve_opened[no]= False
         
         
-'''Revisar esto, y ver como hacer para darle un valor al flujo y que lo setee ahi '''      
     def get_flow(self):
         print(self.board.flow_value)
         
     def set_flow(self,Flow_Value):
         self.board.flow_value = self.board.flow
         
+    
+            
+
+'''De la misma manera que tenia dos opcines para definir la funcion, tengo dos
+opciones para definir que hace esa funcion '''        
         
+#    def open_valve_1_method(self):
+#        self.board.valve_1_opened = True
+#   
+#    def close_valve_1_method(self):
+#        self.board.valve_1_opened = False
+#
+#    def open_valve_2_method(self):
+#        self.board.valve_2_opened = True
+#        
+#    def close_valve_2_method(self):
+#        self.board.valve_2_opened = False
+#        
+    
 
 class FLOWPIDUserInterfase(Frontend):
-    gui = 'LEDPID.ui'
+    gui = 'FLOWPID.ui'
 
     def connect_backend(self):
         super().connect_backend()

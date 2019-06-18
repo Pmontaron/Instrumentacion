@@ -1,0 +1,3 @@
+http://www.arduinotutorialonline.com/2018/07/best-arduino-flow-rate-sensor-tutorial.html
+
+En este tutorial, hay un sketch para arduino que podríamos probar para ver si ese caudalimetro nos sirve o no
