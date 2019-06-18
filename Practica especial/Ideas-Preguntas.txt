@@ -1,0 +1,10 @@
+En ppio ver como hacer para montar el experimento, el martes podemos ver si funciona bien el medidor de caudal
+despues habría que plantear como armar todo, estaba pensando en armar capaz unos caños de pbc, armar un cuadrado
+o solo un caño y las dos valvulas, una va a parar a un tachito y podemos tirar el agua de una botella. Capaz estaría bueno
+que lo del tacho vaya a parar a la botella para no tener que estar cargando todo el tiempo.
+
+Creo también que puede quedar bien, que la valvula de salida arranque abierta para que el agua fluya todo el tiempo y asi
+arranque el ciclo de control.
+
+¿ Es necesario descargar una libreria para el sensor de flujo en el arduino? 
+https://github.com/sekdiy/FlowMeter
