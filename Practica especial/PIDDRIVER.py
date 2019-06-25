@@ -48,21 +48,33 @@ True/False, toma los valores 1 o 2 dependiendo de que valvula quiero usar.  '''
 #        
 #    def set_Kp(self):
 #        self.board.Kp = self.board.Kp
+#
+#    def get_Kp(self):
+#        print(Kp)
 #        
 #    def set_Ki(self):
-#        self.board.Kp = self.board.Ki
+#        self.board.Ki = self.board.Ki
+#        
+#    def get_Ki(self):
+#        print(Ki)
 #        
 #    def set_Kd(self):
-#        self.board.Kp = self.board.Kd
+#        self.board.Kd = self.board.Kd
+#
+#    def get_Kd(self):
+#        print(Kd)
 #        
 #    def set_set_point(self):
 #        self.board.set_point = self.board.Set_Point
+#
+#    def get_set_point(self):
+#        print(self.board.Set_Point)
 #        
-##    def open_valve(self,no):
-##        self.board.valve_opened[no]= True
-##
-##    def close_valve(self,no):
-##        self.board.valve_opened[no]= False
+#    def set_pump_flow(self,no):
+#        self.board.pump_flow[no]= self.board.pump_flow[no]
+#
+#    def get_pump_flow(self,no):
+#        print(self.board.pump_flow[no])
 #        
 #        
 #    def get_flow(self):
@@ -71,26 +83,6 @@ True/False, toma los valores 1 o 2 dependiendo de que valvula quiero usar.  '''
 #    def set_flow(self,Flow_Value):
 #        self.board.flow_value = self.board.flow
 #        
-#    
-#            
-#
-#'''De la misma manera que tenia dos opcines para definir la funcion, tengo dos
-#opciones para definir que hace esa funcion '''        
-#        
-##    def open_valve_1_method(self):
-##        self.board.valve_1_opened = True
-##   
-##    def close_valve_1_method(self):
-##        self.board.valve_1_opened = False
-##
-##    def open_valve_2_method(self):
-##        self.board.valve_2_opened = True
-##        
-##    def close_valve_2_method(self):
-##        self.board.valve_2_opened = False
-##        
-#    
-#
 #class FLOWPIDUserInterfase(Frontend):
 #    gui = 'FLOWPID.ui'
 #
@@ -98,33 +90,37 @@ True/False, toma los valores 1 o 2 dependiendo de que valvula quiero usar.  '''
 #        super().connect_backend()
 #        self.widget.enable_control_loop_button.clicked.connect(self.backend.enable_control_loop_method)
 #        self.widget.disable_control_loop_button.clicked.connect(self.backend.disable_control_loop_method)
-##        self.widget.open_valve_1_button.clicked.connect(self.backend.open_valve_1_method)
-##        self.widget.close_valve_1_button.clicked.connect(self.backend.close_valve_1_method)
-##        self.widget.open_valve_2_button.clicked.connect(self.backend.open_valve_2_method)
-##        self.widget.close_valve_2_button.clicked.connect(self.backend.close_valve_2_method)
-#        
-#
-#
-#if __name__ == '__main__':
-#    from lantz.core.log import log_to_screen, log_to_socket, DEBUG
-#    from lantz.qt import start_gui_app, wrap_driver_cls
-#    
-#    # ~ log_to_socket(DEBUG) # Uncommment this line to log to socket
-#    log_to_screen(DEBUG) # or comment this line to stop logging
-#
-#    QFLOWPID = wrap_driver_cls(FLOWPIDDriver)
-#    with QFLOWPID.via_packfile('FLOWPIDDriver.pack.yaml', check_update=True) as board:
-#        app = FLOWPIDBackend(board=board)
-#        start_gui_app(app, FLOWPIDUserInterfase)
+
+
 
 if __name__ == '__main__':
     from lantz.core.log import log_to_screen, log_to_socket, DEBUG
-    from lantz.qt import start_gui_app, wrap_driver_cls
-    from lantz import ureg
+    from lantz.qt import start_gui_app, wrap_driver_cls, QtCore
+    import time
     
     # ~ log_to_socket(DEBUG) # Uncommment this line to log to socket
     log_to_screen(DEBUG) # or comment this line to stop logging
 
-    with FLOWPIDDriver.via_packfile('FLOWPIDDriver.pack.yaml', check_update=True) as board:
-        board.set_point = 90 * ureg.liter/ureg.hour
-        print(board.set_point)
+''' Inicializamos el programa definiendo las variables'''
+    board = FLOWPID.via_packfile('FLOWPIDDriver.pack.yaml', check_update=True)
+    board.initialize()    
+    board.Kp = 8
+    board.Ki = 5
+    board.Kd = 2
+    board.Set_point = 100
+    board.control_loop_enabled= True
+    board.pump_flow[1] = 0
+    board.pump_flow[2] = 0
+    
+    ''' Guardamos los valores de flujo por el caudalimetro en intervalos
+    de X ms. ''' 
+    interval= 500
+    flow_data=[]
+    i=1
+    board.timer = QtCore.QTimer()
+    board.timer.setInterval(interval) # ms
+    board.timer.timeout.connect(flow_data.append([board.flow_value,interval*i,board.pump_flow[1],board.pump_flow[2]]),i++)
+    
+
+
+
