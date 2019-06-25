@@ -15,31 +15,49 @@
 // OJO tambien revisar la funcion get_flow porque si bien funciona en un sketch nuevo, hay que ver con cuidado que hace
 
 #include "inodriver_user.h"
+#include <AFMotor.h>
+#include <Arduino.h>
 
 //PID constants
-double kp = 2
-double ki = 5
-double kd = 1
+double kp = 2;
+double ki = 5;
+double kd = 1;
+
+//PWM values
+float PWM_Value1;
+float PWM_Value2;
+
+
+//Bomba 1
+int ENA = 10;
+int IN1 = 9;
+int IN2 = 8;
+float pump_flow1;
+
+//Bomba 2
+int  ENB = 5;
+int IN3 = 7;
+int IN4 = 6;
+float pump_flow2;
 
 // Variable que determina si activo el loop de control o no
-bool CtrlLoop = 0 
+bool CtrlLoop = 0 ;
 
 // Instancio variables que se usan durante el PID
 unsigned long currentTime, previousTime;
 double elapsedTime;
 double error;
 double lastError;
-double input, output, setPoint;
+double input, output;
+float setPoint;
 double cumError, rateError;
 
 
 // Instancio variables necesarias para medir flujo de manera continua
 volatile int flow_frequency; // Measures flow sensor pulses
 float l_hour; // Calculated litres/hour
-float setPoint;
 float tolerance;
 const unsigned char flowsensor_pin = 2; // Sensor Input
-const pump_pin = 3;
 unsigned long cloopTime;
 void flow () // Interrupt function
 {
@@ -47,7 +65,6 @@ void flow () // Interrupt function
 }
 
 void user_setup() {
-
      setPoint = 0;                          //set point
      pinMode(flowsensor_pin, INPUT);
      digitalWrite(flowsensor_pin, HIGH); // Optional Internal Pull-Up
@@ -55,8 +72,36 @@ void user_setup() {
      sei(); // Enable interrupts
      currentTime = millis();
      cloopTime = currentTime;
-     tolerance = 0.01
+     tolerance = 0.01;
+     //Declaramos los pines de las bombas como salida
+     pinMode (ENA, OUTPUT);
+     pinMode (IN1, OUTPUT);
+     pinMode (IN2, OUTPUT);
+     pinMode (ENB, OUTPUT);
+     pinMode (IN3, OUTPUT);
+     pinMode (IN4, OUTPUT);
+     
 }
+
+// Funcion que utiliza el PID
+
+double computePID(double inp){     
+        currentTime = millis();                //get current time
+        elapsedTime = (double)(currentTime - previousTime);        //compute time elapsed from previous computation
+        
+        error = setPoint - inp;                                // determine error
+        cumError += error * elapsedTime;                // compute integral
+        rateError = (error - lastError)/elapsedTime;   // compute derivative
+ 
+        double out = kp*error + ki*cumError + kd*rateError;                //PID output               
+ 
+        lastError = error;                                //remember current error
+        previousTime = currentTime;                        //remember current time
+ 
+        return out;                                        //have function return the PID output
+}
+
+
 
 // Aca empieza el loop, si la variable CtrlLoop es True (1) entra en el loop de control, y si vale False(0)no hace nada
 void user_loop() {
@@ -72,36 +117,22 @@ void user_loop() {
       flow_frequency = 0; // Reset Counter
 
  
-      if (CtrlLoop == 1){
+      if ((CtrlLoop == 1)||(setPoint - l_hour > tolerance)){
         input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
         output = computePID(input);
         delay(100);
-        analogWrite(pump_pin, output);                //control the motor based on PID value
+        analogWrite(ENA, output);
+        analogWrite(ENB, output); //control the motor based on PID value
+        pump_flow1=output;
+        pump_flow2=output;
       }
 
-      else if (setPoint - l_hour > tolerance)
+      else {}
       
    }
 }
 
 
-// Funcion que utiliza el PID
-
-double computePID(double inp){     
-        currentTime = millis();                //get current time
-        elapsedTime = (double)(currentTime - previousTime);        //compute time elapsed from previous computation
-        
-        error = Setpoint - inp;                                // determine error
-        cumError += error * elapsedTime;                // compute integral
-        rateError = (error - lastError)/elapsedTime;   // compute derivative
- 
-        double out = kp*error + ki*cumError + kd*rateError;                //PID output               
- 
-        lastError = error;                                //remember current error
-        previousTime = currentTime;                        //remember current time
- 
-        return out;                                        //have function return the PID output
-}
 
 
 // COMMAND: Kp, FEAT: Kp
@@ -151,7 +182,6 @@ float get_Set_Point() {
 int set_Set_Point(float value) {
 
   setPoint = value;
-  
   return 0;
 };
 
@@ -159,17 +189,41 @@ int set_Set_Point(float value) {
 
 // COMMAND: Pump_Flow, FEAT: pump_flow
 float get_Pump_Flow(int key) {
-  return 0.0;
+
+  if(key=1){
+  return pump_flow1;
+  }
+  if(key=2){
+  return pump_flow2;
+  }
 };
 
+
+
 int set_Pump_Flow(int key, float value) {
+
+if(key = 1){
+  //MOVER MOTOR A
+    digitalWrite(IN1, HIGH)
+;    digitalWrite(IN2, LOW);
+    //Variando el próximo valor entre 0 y 255 varía la velocidad
+    PWM_Value1=6.375*value-510; //esto es solo para poder cambiar de flujop a unidad de la bomba
+    analogWrite(ENA, PWM_Value1);
+};
+if(key = 2){
+  //MOVER MOTOR B
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    //Variando el próximo valor entre 0 y 255 varía la velocidad
+    PWM_Value2=6.375*value-510; //esto es solo para poder cambiar de flujop a unidad de la bomba
+    analogWrite(ENB, PWM_Value2);
+};
   return 0;
 };
 
 
 // COMMAND: Control_Loop_enabled, FEAT: control_loop_enabled
-int get_Control_Loop_enabled(int value) {
-  CtrlLoop = value;
+int get_Control_Loop_enabled() {
   return CtrlLoop;
 };
 
