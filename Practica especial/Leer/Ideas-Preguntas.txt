@@ -1,3 +1,5 @@
+-------------RESUELTO------------------
+
 En ppio ver como hacer para montar el experimento, el martes podemos ver si funciona bien el medidor de caudal
 despues habría que plantear como armar todo, estaba pensando en armar capaz unos caños de pbc, armar un cuadrado
 o solo un caño y las dos valvulas, una va a parar a un tachito y podemos tirar el agua de una botella. Capaz estaría bueno
@@ -8,3 +10,48 @@ arranque el ciclo de control.
 
 ¿ Es necesario descargar una libreria para el sensor de flujo en el arduino? 
 https://github.com/sekdiy/FlowMeter
+
+---------------------------------------
+
+------------- PARA PREGUNTAR ---------------------
+Se puede usar una bomba como salida de agua y otra como entrada y la que "escupe" agua, darle alguna función de valores?
+para que vaya cambiando y funcione como una perturbacion a la otra que es la que el PID va a tener que regular para m
+mantener el valor de flujo constante??
+
+ Dentro de QuantityDictFeat hay una opción que se llama limits, eso esta para poner en que rango funciona? Como defino el rango?
+
+https://lantz.readthedocs.io/en/0.3/tutorial/using-feats.html?highlight=warning#valid-values
+
+Logre cambiar los K y el set point pero no los flujos de las bombas
+
+
+El setter del flujo de las bombas lo tenía escrito de la siguiente manera
+
+int set_Pump_Flow(int key, float value) {
+
+if(key = 1){
+  //MOVER MOTOR A
+    pump_flow1 = value;
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    //Variando el próximo valor entre 0 y 255 varía la velocidad
+    PWM_Value1=(6.375*pump_flow1)-510; //esto es solo para poder cambiar de flujop a unidad de la bomba
+    analogWrite(ENA, PWM_Value1);
+};
+if(key = 2){
+  //MOVER MOTOR B
+    pump_flow2 = value;
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    //Variando el próximo valor entre 0 y 255 varía la velocidad
+    PWM_Value2=(6.375*pump_flow2)-510; //esto es solo para poder cambiar de flujop a unidad de la bomba
+    analogWrite(ENB, PWM_Value2);
+};
+  return 0;
+};
+
+
+Sin embargo, esto estaba fuera del user loop, no debería estar dentro del user loop, y debajo de esta función solo
+la línea de: 
+
+ 	pump_flowi = value??

@@ -7,7 +7,7 @@ Created on Tue Jun 11 19:02:27 2019
 
 from lantz.ino import INODriver, BoolFeat, QuantityFeat, BoolDictFeat, QuantityDictFeat
 from lantz.qt import Backend, Frontend, InstrumentSlot, QtCore
-
+from lantz import Q_
 
 class FLOWPIDDriver(INODriver):
         
@@ -24,7 +24,7 @@ class FLOWPIDDriver(INODriver):
     set_point=QuantityFeat('Set_Point', units='L/hour')
     flow_value = QuantityFeat('Flow', units = 'L/hour', setter=False) # Si agrego este argumento: setter=False, entonces la funcion en el sketch de Arduino se genera sin setter.
 #    valve_opened = BoolDictFeat('Valve_Opened', keys=(1, 2))
-    pump_flow = QuantityDictFeat('Pump_Flow', keys=(1, 2) , units = 'L/hour')
+    pump_flow = QuantityDictFeat('Pump_Flow', keys=(1, 2) , units = 'L/hour' , limits = (0,120))
     
    
 ''' Hay dos maneras de escribir que las valvulas se puedan abrir o cerrar
@@ -106,24 +106,24 @@ if __name__ == '__main__':
 
     board = FLOWPIDDriver.via_packfile('FLOWPIDDriver.pack.yaml', check_update=True)
     board.initialize()    
-    board.Kp = 8
-    board.Ki = 5
-    board.Kd = 2
-    board.Set_point = 100
-    board.control_loop_enabled= True
-    board.pump_flow[1] = 0
-    board.pump_flow[2] = 0
-    
-    ''' Guardamos los valores de flujo por el caudalimetro en intervalos
-    de X ms. ''' 
-    interval= 500
-    flow_data=[]
-    i=1
-    board.timer = QtCore.QTimer()
-    board.timer.setInterval(interval) # ms
-    board.timer.timeout.connect(flow_data.append([board.flow_value,interval*i,board.pump_flow[1],board.pump_flow[2]]))
-    i=i+1
-    
+    board.Kp = 1
+    board.Ki = 0
+    board.Kd = 0
+#    board.Set_point = 0
+#    board.control_loop_enabled= False
+    board.pump_flow[1] = Q_(0, 'liter/hour')
+    board.pump_flow[2] = Q_(100, 'liter/hour')
+
+#    ''' Guardamos los valores de flujo por el caudalimetro en intervalos
+#    de X ms. ''' 
+#    interval= 500
+#    flow_data=[]
+#    i=1
+#    board.timer = QtCore.QTimer()
+#    board.timer.setInterval(interval) # ms
+#    board.timer.timeout.connect(flow_data.append([board.flow_value,interval*i,board.pump_flow[1],board.pump_flow[2]]))
+#    i=i+1
+#    
 
 
 

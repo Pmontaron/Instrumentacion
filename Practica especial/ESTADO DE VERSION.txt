@@ -1,0 +1,4 @@
+En esta version, intentamos correr el programa de Spyder pero nos devolvía un error porque no encontraba la ruta en el cual
+el .yaml se encontraba. Esto pasa porque la ruta que buscaba era la correspondiente a la computadora del laboratorio. 
+Para eso volvimos a crear el PIDDriver de python y el sketch guardando esta version para no sobreescrbir todo. 
+A esta nueva version la llame VERSION 2.0

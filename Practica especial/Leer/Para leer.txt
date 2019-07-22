@@ -43,3 +43,10 @@ https://www.youtube.com/watch?v=8GwaCMJBExw
 %% Motor driver (para conectar las mini pumps)
 
 https://www.teachmemicro.com/use-l298n-motor-driver/
+
+
+%% Pump
+
+https://forum.arduino.cc/index.php?topic=470580.0
+
+https://www.instructables.com/id/Arduino-Sump-Pump/
