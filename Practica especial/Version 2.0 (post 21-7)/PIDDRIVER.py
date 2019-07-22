@@ -111,18 +111,20 @@ if __name__ == '__main__':
     board.Kd = 0
 #    board.Set_point = 0
 #    board.control_loop_enabled= False
-    board.pump_flow[1] = Q_(0, 'liter/hour')
-    board.pump_flow[2] = Q_(100, 'liter/hour')
+#    print(board.pump_flow[1]) 
+#    print(board.pump_flow[2])
+#    board.pump_flow[1]= Q_(0, 'liter/hour')
+#    board.pump_flow[2] = Q_(100, 'liter/hour')
 
-#    ''' Guardamos los valores de flujo por el caudalimetro en intervalos
-#    de X ms. ''' 
-#    interval= 500
-#    flow_data=[]
-#    i=1
-#    board.timer = QtCore.QTimer()
-#    board.timer.setInterval(interval) # ms
-#    board.timer.timeout.connect(flow_data.append([board.flow_value,interval*i,board.pump_flow[1],board.pump_flow[2]]))
-#    i=i+1
+    ''' Guardamos los valores de flujo por el caudalimetro en intervalos
+    de X ms. ''' 
+    interval= 500
+    flow_data=[]
+    i=1
+    board.timer = QtCore.QTimer()
+    board.timer.setInterval(interval) # ms
+    board.timer.timeout.connect(flow_data.append([board.flow_value,interval*i,board.pump_flow[1],board.pump_flow[2]]),i=i+1)
+    
 #    
 
 

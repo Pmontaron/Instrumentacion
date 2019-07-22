@@ -20,7 +20,7 @@
 
 //PID constants
 double kp = 2;
-double ki = 5;
+double ki = 1;
 double kd = 1;
 
 //PWM values
@@ -32,16 +32,16 @@ float PWM_Value2;
 int ENA = 10;
 int IN1 = 9;
 int IN2 = 8;
-float pump_flow1;
+float pump_flow1=76;
 
 //Bomba 2
 int  ENB = 5;
 int IN3 = 7;
 int IN4 = 6;
-float pump_flow2;
+float pump_flow2=76;
 
 // Variable que determina si activo el loop de control o no
-bool CtrlLoop = 0 ;
+bool CtrlLoop = 1;
 
 // Instancio variables que se usan durante el PID
 unsigned long currentTime, previousTime;
@@ -66,14 +66,14 @@ void flow () // Interrupt function
 
 void user_setup() {
 
-     setPoint = 0;                          //set point
+     setPoint = 100;                          //set point
      pinMode(flowsensor_pin, INPUT);
      digitalWrite(flowsensor_pin, HIGH); // Optional Internal Pull-Up
      attachInterrupt(0, flow, RISING); // Setup Interrupt
      sei(); // Enable interrupts
      currentTime = millis();
      cloopTime = currentTime;
-     tolerance = 0.01;
+     tolerance = 153*(24/247);
      //Declaramos los pines de las bombas como salida
      pinMode (ENA, OUTPUT);
      pinMode (IN1, OUTPUT);
@@ -111,41 +111,54 @@ void user_loop() {
 
  // Esta primera parte del loop va a estar corriendo siempre
      currentTime = millis();
-    //MOVER MOTOR A
+
+ //MOVER MOTOR A
       digitalWrite(IN1, HIGH);
       digitalWrite(IN2, LOW);
       //Variando el próximo valor entre 0 y 255 varía la velocidad
-      PWM_Value1=(2.125*pump_flow1); //esto es solo para poder cambiar de flujop a unidad de la bomba
+      PWM_Value1=((112.82800-(3600*0.550/pump_flow1))/0.34092); //esto es solo para poder cambiar de flujop a unidad de la bomba
       analogWrite(ENA, PWM_Value1);
 
-    //MOVER MOTOR B
+
+  //MOVER MOTOR B
       digitalWrite(IN3, HIGH);
       digitalWrite(IN4, LOW);
       //Variando el próximo valor entre 0 y 255 varía la velocidad
-      PWM_Value2=2.125*pump_flow2; //esto es solo para poder cambiar de flujop a unidad de la bomba
+      PWM_Value2=((112.82800-(3600*0.550/pump_flow2))/0.34092); //esto es solo para poder cambiar de flujop a unidad de la bomba
       analogWrite(ENB, PWM_Value2);
-    
+
+    Serial.print(l_hour, 3);
+    Serial.print(", ");
+    Serial.print(flow_frequency,3);
+  Serial.println("  ");
    // Every second, calculate and print litres/hour
    if(currentTime >= (cloopTime + 1000))
    {
       cloopTime = currentTime; // Updates cloopTime
       // Pulse frequency (Hz) = 7.5Q, Q is flow rate in L/min.
-      l_hour = (flow_frequency * 60 / 7.5); // (Pulse frequency x 60 min) / 7.5Q = flowrate in L/hour
+      l_hour = ((flow_frequency * 60 / (7.5))* (160/1353.8))*(153/247); // (Pulse frequency x 60 min) / 7.5Q = flowrate in L/hour
       flow_frequency = 0; // Reset Counter
 
  
-      if ((CtrlLoop == 1)||(setPoint - l_hour > tolerance)){
-        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
-        output = computePID(input);
-        delay(100);
-        analogWrite(ENA, output);
-        analogWrite(ENB, output); //control the motor based on PID value
-        pump_flow1=output;
-        pump_flow2=output;
-      }
-
-      else {}
-      
+//      if (CtrlLoop == 1){
+//        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
+//        output = computePID(input);
+//        delay(100);
+//        analogWrite(ENA, output);
+//        analogWrite(ENB, output); //control the motor based on PID value
+//        pump_flow1= pump_flow1 + output;
+//        pump_flow2= pump_flow2 + output;
+//        delay(100);
+//        CtrlLoop = 1000;
+//      }
+//      
+//
+//      else {}
+//      
+//      if ((setPoint - l_hour > tolerance)){
+//        CtrlLoop=CtrlLoop-1;
+//       
+//      }
    }
   
 }
@@ -206,10 +219,10 @@ int set_Set_Point(float value) {
 // COMMAND: Pump_Flow, FEAT: pump_flow
 float get_Pump_Flow(int key) {
 
-  if(key=1){
+  if(key==1){
   return pump_flow1;
   }
-  if(key=2){
+  if(key==2){
   return pump_flow2;
   }
 };
@@ -218,13 +231,16 @@ float get_Pump_Flow(int key) {
 
 int set_Pump_Flow(int key, float value) {
 
-if(key = 1){
+if(key == 1){
   pump_flow1 = value;
+     
 };
-if(key = 2){
+if(key == 2){
    pump_flow2 = value;
+     
+   
 };
-  return 0;
+
 };
 
 
