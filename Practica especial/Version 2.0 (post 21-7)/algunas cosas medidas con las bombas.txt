@@ -898,13 +898,13 @@ pvov =
 para el seteo de 60*2.125  mando  550 ml en 74.73 segundos
 para el seteo de 80*2.125  mando  550 ml en 46.73 segundos
 para el seteo de 100*2.125 lts por hora 550 ml en 40.56 segundos
-para el seteo de 120*2.125 lts por hora 650 ml en 28.49 segundos
+para el seteo de 120*2.125 lts por hora 550 ml en 28.49 segundos
 
 
 valor de flujo maximo
 0.550/(112.82800-0.34092*255)  (l/seg)
 
-3600*0.550/(112.82800-0.34092*255) (lts/hora) 
+3600*0.550/(112.82800-0.34092*255) (lts/hora)  76.4673623394
 60*0.550/(112.82800-0.34092*255)  =  1.27445603899  (lts/min) 
 
 flujo litros por hora:q
