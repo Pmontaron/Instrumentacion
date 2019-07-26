@@ -5,7 +5,7 @@
 /// 
 ///  Filename; D:\Documentos\Licenciatura en Física\Laboratorios\Instrumentacion\Instrumentacion\Practica especial\V ersion 3.0\PIDDRIVER.py
 ///  Source class: FLOWPIDDriver
-///  Generation timestamp: 2019-07-25T19:30:32.518211
+///  Generation timestamp: 2019-07-26T13:49:27.862979
 ///  Class code hash: b4513fff6bb16d2ee86ec4e6995533d4e153bd09
 ///
 /////////////////////////////////////////////////////////////
@@ -51,7 +51,20 @@ void bridge_setup() {
   sCmd.setDefaultHandler(unrecognized); 
 
 
-  // pumpflowvalue1
+  // setpoint
+  // <F> float as string 
+
+  // Getter:
+  //   SP? 
+  // Returns: <F> 
+  sCmd.addCommand("SP?", wrapperGet_SP); 
+
+  // Setter:
+  //   SP <F> 
+  // Returns: OK or ERROR    
+  sCmd.addCommand("SP", wrapperSet_SP); 
+
+  // pumpflow1
   // <F> float as string 
 
   // Getter:
@@ -63,19 +76,6 @@ void bridge_setup() {
   //   PF1 <F> 
   // Returns: OK or ERROR    
   sCmd.addCommand("PF1", wrapperSet_PF1); 
-
-  // pumpflowvalue2
-  // <F> float as string 
-
-  // Getter:
-  //   PF2? 
-  // Returns: <F> 
-  sCmd.addCommand("PF2?", wrapperGet_PF2); 
-
-  // Setter:
-  //   PF2 <F> 
-  // Returns: OK or ERROR    
-  sCmd.addCommand("PF2", wrapperSet_PF2); 
 
   // kd
   // <F> float as string 
@@ -98,31 +98,44 @@ void bridge_setup() {
   // Returns: <F> 
   sCmd.addCommand("FV?", wrapperGet_FV); 
 
-  // setpoint
-  // <F> float as string 
-
-  // Getter:
-  //   SP? 
-  // Returns: <F> 
-  sCmd.addCommand("SP?", wrapperGet_SP); 
-
-  // Setter:
-  //   SP <F> 
-  // Returns: OK or ERROR    
-  sCmd.addCommand("SP", wrapperSet_SP); 
-
-  // CLENABLE
+  // cl
   // <B> bool as string: True as "1", False as "0" 
 
   // Getter:
-  //   CLENABLE? 
+  //   CLEN? 
   // Returns: <B> 
-  sCmd.addCommand("CLENABLE?", wrapperGet_CLENABLE); 
+  sCmd.addCommand("CLEN?", wrapperGet_CLEN); 
 
   // Setter:
-  //   CLENABLE <B> 
+  //   CLEN <B> 
   // Returns: OK or ERROR    
-  sCmd.addCommand("CLENABLE", wrapperSet_CLENABLE); 
+  sCmd.addCommand("CLEN", wrapperSet_CLEN); 
+
+  // ki
+  // <F> float as string 
+
+  // Getter:
+  //   KI? 
+  // Returns: <F> 
+  sCmd.addCommand("KI?", wrapperGet_KI); 
+
+  // Setter:
+  //   KI <F> 
+  // Returns: OK or ERROR    
+  sCmd.addCommand("KI", wrapperSet_KI); 
+
+  // pumpflow2
+  // <F> float as string 
+
+  // Getter:
+  //   PF2? 
+  // Returns: <F> 
+  sCmd.addCommand("PF2?", wrapperGet_PF2); 
+
+  // Setter:
+  //   PF2 <F> 
+  // Returns: OK or ERROR    
+  sCmd.addCommand("PF2", wrapperSet_PF2); 
 
   // kp
   // <F> float as string 
@@ -136,19 +149,6 @@ void bridge_setup() {
   //   KP <F> 
   // Returns: OK or ERROR    
   sCmd.addCommand("KP", wrapperSet_KP); 
-
-  // ki
-  // <F> float as string 
-
-  // Getter:
-  //   LI? 
-  // Returns: <F> 
-  sCmd.addCommand("LI?", wrapperGet_LI); 
-
-  // Setter:
-  //   LI <F> 
-  // Returns: OK or ERROR    
-  sCmd.addCommand("LI", wrapperSet_LI); 
 }
 
 //// Code 
@@ -162,7 +162,34 @@ void unrecognized(const char *command) {
   error("Unknown command");
 }
 //// Auto generated Feat and DictFeat Code
-// COMMAND: PF1, FEAT: pumpflowvalue1
+// COMMAND: SP, FEAT: setpoint
+
+void wrapperGet_SP() { 
+  Serial.println(get_SP()); 
+}; 
+
+
+void wrapperSet_SP() {
+  char *arg;
+  
+  arg = sCmd.next();
+  if (arg == NULL) {
+    error("No value stated");
+    return;
+  }
+  float value = atof(arg);
+
+  int err = set_SP(value);
+  if (err == 0) {
+    ok();
+  } else {
+    error_i(err);
+  }
+};
+
+
+
+// COMMAND: PF1, FEAT: pumpflow1
 
 void wrapperGet_PF1() { 
   Serial.println(get_PF1()); 
@@ -180,33 +207,6 @@ void wrapperSet_PF1() {
   float value = atof(arg);
 
   int err = set_PF1(value);
-  if (err == 0) {
-    ok();
-  } else {
-    error_i(err);
-  }
-};
-
-
-
-// COMMAND: PF2, FEAT: pumpflowvalue2
-
-void wrapperGet_PF2() { 
-  Serial.println(get_PF2()); 
-}; 
-
-
-void wrapperSet_PF2() {
-  char *arg;
-  
-  arg = sCmd.next();
-  if (arg == NULL) {
-    error("No value stated");
-    return;
-  }
-  float value = atof(arg);
-
-  int err = set_PF2(value);
   if (err == 0) {
     ok();
   } else {
@@ -251,41 +251,14 @@ void wrapperGet_FV() {
 
 
 
-// COMMAND: SP, FEAT: setpoint
+// COMMAND: CLEN, FEAT: cl
 
-void wrapperGet_SP() { 
-  Serial.println(get_SP()); 
+void wrapperGet_CLEN() { 
+  Serial.println(get_CLEN()); 
 }; 
 
 
-void wrapperSet_SP() {
-  char *arg;
-  
-  arg = sCmd.next();
-  if (arg == NULL) {
-    error("No value stated");
-    return;
-  }
-  float value = atof(arg);
-
-  int err = set_SP(value);
-  if (err == 0) {
-    ok();
-  } else {
-    error_i(err);
-  }
-};
-
-
-
-// COMMAND: CLENABLE, FEAT: CLENABLE
-
-void wrapperGet_CLENABLE() { 
-  Serial.println(get_CLENABLE()); 
-}; 
-
-
-void wrapperSet_CLENABLE() {
+void wrapperSet_CLEN() {
   char *arg;
   
   arg = sCmd.next();
@@ -295,7 +268,61 @@ void wrapperSet_CLENABLE() {
   }
   int value = atoi(arg);
 
-  int err = set_CLENABLE(value);
+  int err = set_CLEN(value);
+  if (err == 0) {
+    ok();
+  } else {
+    error_i(err);
+  }
+};
+
+
+
+// COMMAND: KI, FEAT: ki
+
+void wrapperGet_KI() { 
+  Serial.println(get_KI()); 
+}; 
+
+
+void wrapperSet_KI() {
+  char *arg;
+  
+  arg = sCmd.next();
+  if (arg == NULL) {
+    error("No value stated");
+    return;
+  }
+  float value = atof(arg);
+
+  int err = set_KI(value);
+  if (err == 0) {
+    ok();
+  } else {
+    error_i(err);
+  }
+};
+
+
+
+// COMMAND: PF2, FEAT: pumpflow2
+
+void wrapperGet_PF2() { 
+  Serial.println(get_PF2()); 
+}; 
+
+
+void wrapperSet_PF2() {
+  char *arg;
+  
+  arg = sCmd.next();
+  if (arg == NULL) {
+    error("No value stated");
+    return;
+  }
+  float value = atof(arg);
+
+  int err = set_PF2(value);
   if (err == 0) {
     ok();
   } else {
@@ -323,33 +350,6 @@ void wrapperSet_KP() {
   float value = atof(arg);
 
   int err = set_KP(value);
-  if (err == 0) {
-    ok();
-  } else {
-    error_i(err);
-  }
-};
-
-
-
-// COMMAND: LI, FEAT: ki
-
-void wrapperGet_LI() { 
-  Serial.println(get_LI()); 
-}; 
-
-
-void wrapperSet_LI() {
-  char *arg;
-  
-  arg = sCmd.next();
-  if (arg == NULL) {
-    error("No value stated");
-    return;
-  }
-  float value = atof(arg);
-
-  int err = set_LI(value);
   if (err == 0) {
     ok();
   } else {

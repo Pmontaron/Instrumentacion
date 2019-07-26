@@ -5,7 +5,7 @@
 /// 
 ///  Filename; D:\Documentos\Licenciatura en Física\Laboratorios\Instrumentacion\Instrumentacion\Practica especial\V ersion 3.0\PIDDRIVER.py
 ///  Source class: FLOWPIDDriver
-///  Generation timestamp: 2019-07-25T19:30:32.518211
+///  Generation timestamp: 2019-07-26T13:49:27.862979
 ///  Class code hash: b4513fff6bb16d2ee86ec4e6995533d4e153bd09
 ///
 /////////////////////////////////////////////////////////////
@@ -29,21 +29,21 @@ void bridge_setup();
 
 void getInfo();
 void unrecognized(const char *);
+void wrapperGet_SP(); 
+void wrapperSet_SP(); 
 void wrapperGet_PF1(); 
 void wrapperSet_PF1(); 
-void wrapperGet_PF2(); 
-void wrapperSet_PF2(); 
 void wrapperGet_KD(); 
 void wrapperSet_KD(); 
 void wrapperGet_FV(); 
-void wrapperGet_SP(); 
-void wrapperSet_SP(); 
-void wrapperGet_CLENABLE(); 
-void wrapperSet_CLENABLE(); 
+void wrapperGet_CLEN(); 
+void wrapperSet_CLEN(); 
+void wrapperGet_KI(); 
+void wrapperSet_KI(); 
+void wrapperGet_PF2(); 
+void wrapperSet_PF2(); 
 void wrapperGet_KP(); 
 void wrapperSet_KP(); 
-void wrapperGet_LI(); 
-void wrapperSet_LI(); 
 
 
 #endif // inodriver_bridge_h

@@ -78,5 +78,5 @@ void loop() {
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW)  ;
   //Variando el próximo valor entre 0 y 255 varía la velocidad
-  analogWrite(ENB, 0);
+  analogWrite(ENB, VelocidadBomba);
 }
