@@ -30,8 +30,8 @@ class FLOWPIDDriver(INODriver):
     setpoint=QuantityFeat('SP', units='L/hour')
     flowvalue = QuantityFeat('FV', units = 'L/hour', setter=False) # Si agrego este argumento: setter=False, entonces la funcion en el sketch de Arduino se genera sin setter.
 #    valve_opened = BoolDictFeat('Valve_Opened', keys=(1, 2))
-    pumpflow1 = QuantityFeat('PF1', units = 'L/hour' , limits = (0,77))
-    pumpflow2 = QuantityFeat('PF2', units = 'L/hour' , limits = (0,77))
+    pumpflow1 = QuantityFeat('PF1', units = 'L/hour' , limits = (0,102.5)) # trabaja entre 27 y 102.5 l/h 
+    pumpflow2 = QuantityFeat('PF2', units = 'L/hour' , limits = (0,72.9)) # Trabaja entre 17.94 y 72.9 L/H
    
 ''' Hay dos maneras de escribir que las valvulas se puedan abrir o cerrar
 en ambos casos conviene ser especifico con lo que hace la función. La primer 
@@ -148,14 +148,16 @@ if __name__ == '__main__':
     
 
     board.setpoint = 100
-    board.cl= True
+    board.cl= False
     board.pumpflow1 = 70
     board.pumpflow2 = 70
 
-    # esta parte del programa debería medir el flujo para el pid 
+ # Cantidad de segundos que quiero correr el programa dividios el paso de tiempo del sleep da el valor al que i debe ser menor para correr
+    i = 1
     interval = 1
     Tolerancia = (0.2426513536134539)*60
     flow_data=[]
+    t1_start = time.perf_counter()
     i = 0.01
     while i<100:    
         t1_stop = time.perf_counter()
@@ -176,56 +178,5 @@ if __name__ == '__main__':
     plt.ylabel('flujo [L/h]')
     plt.show()
     
-#%% 
-    ''' Guardamos los valores de flujo por el caudalimetro en intervalos
-    de X ms. '''  
-    
-#    board.timer = QtCore.QTimer()
-#    board.timer.setInterval(interval) # ms
-#    i=1
-#        board.cl = True
-#    board.timer.timeout.connect(flow_data.append([board.flowvalue,interval*i,board.pumpflow1,board.pumpflow2]))
-  
-    ''' Armar un programa que mida el flujo del caudalimetro durante cierto tiempo '''
- # Cantidad de segundos que quiero correr el programa dividios el paso de tiempo del sleep da el valor al que i debe ser menor para correr
-    i = 1
-    interval= 0.1
-    flow_data=[]
-    t1_start = time.perf_counter()
-    while i<9000:
-        t1_stop = time.perf_counter()
-        #Hora=datetime.now().strftime('%H:%M:%S.%f')[:-4]
-        flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
-        time.sleep(interval)
-        t1_partial= time.perf_counter()
-        i=i+1
-        
-    tiempo = []
-    data = []
-    for j in range(len(flow_data)):
-        tiempo.append(flow_data[j][3]-flow_data[0][3])
-        data.append(flow_data[j][0])
-        
-    plt.plot(tiempo,data)
-    plt.title("Flujo de bombas fijo 60 L/h")
-    plt.xlabel('tiempo [seg]')
-    plt.ylabel('flujo [L/h]')
-    plt.show()
-
-#%%
-#Ahora empezamos a realizar las mediciones. Primero tenemos que tomar distintos valorse de flujo para Kp = 1  Ki=Kd=0 
-#y graficarlo y despues vamos probando con otras constantes.    
-
-
-
-    
-#    init=datetime.now().strftime('%M:%S.%f')[:-4]
-#    while cont<10:
-#        actual=datetime.now().strftime('%M:%S.%f')[:-4]
-#        time=(float(actual[0:1])*60+float(actual[3:len(init)]))-(float(init[0:1])*60+float(init[3:len(init)]))
-#        flow_data.append([board.flowvalue.m,time,board.pumpflow1.m,board.pumpflow2.m])
-#        if abs(board.flowvalue.m - board.setpoint.m)<Tolerancia:
-#            cont=cont+1
-#        else:
-#            cont=0
-#        time.sleep(interval)
+''' En esta parte de arriba, podemos medir en un intervalo de tiempo como cambia el flujo del caudalimetro, y de las bombas
+con o sin pid.'''

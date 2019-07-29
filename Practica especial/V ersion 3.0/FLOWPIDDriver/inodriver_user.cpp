@@ -127,7 +127,7 @@ void user_loop() {
       digitalWrite(IN1, HIGH);
       digitalWrite(IN2, LOW);
       //Variando el próximo valor entre 0 y 255 varía la velocidad
-      PWM_Value1=((112.82800-(3600*0.550/pump_flow1))/0.34092); //esto es solo para poder cambiar de flujop a unidad de la bomba
+      PWM_Value1=(pump_flow1 + 4.60)/0.42; //esto es solo para poder cambiar de flujop a unidad de la bomba
       analogWrite(ENA, PWM_Value1);
 
 
@@ -135,7 +135,7 @@ void user_loop() {
       digitalWrite(IN3, HIGH);
       digitalWrite(IN4, LOW);
       //Variando el próximo valor entre 0 y 255 varía la velocidad
-      PWM_Value2=((112.82800-(3600*0.550/pump_flow2))/0.34092); //esto es solo para poder cambiar de flujop a unidad de la bomba
+      PWM_Value2=(pump_flow2 + 3.60)/0.3; //esto es solo para poder cambiar de flujop a unidad de la bomba
       analogWrite(ENB, PWM_Value2);
 
 //    Serial.println(l_hour, 3);
@@ -150,7 +150,7 @@ void user_loop() {
         l_hour = ((flow_frequency/7.5) *1.7886178862/30.24556546990604)*60;
       flow_frequency = 0; // Reset Counter
 
-      if ((CtrlLoop == 1)||(setPoint - l_hour > tolerance)){
+      if ((CtrlLoop == 1)){ //||(setPoint - l_hour > tolerance)){
         input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
         output = computePID(input);
         delay(100);
