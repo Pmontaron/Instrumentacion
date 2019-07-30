@@ -43,13 +43,13 @@ float PWM_Value2;
 int ENA = 10;
 int IN1 = 9;
 int IN2 = 8;
-float pump_flow1=0;
+float pump_flow1=-4.60;
 
 //Bomba 2
 int  ENB = 5;
 int IN3 = 7;
 int IN4 = 6;
-float pump_flow2=0;
+float pump_flow2=-3.60;
 
 // Variable que determina si activo el loop de control o no
 bool CtrlLoop = 0;
@@ -84,7 +84,7 @@ void user_setup() {
      sei(); // Enable interrupts
      currentTime = millis();
      cloopTime = currentTime;
-     tolerance = (0.2426513536134539)*60;
+     tolerance = 10*setPoint/100;
      //Declaramos los pines de las bombas como salida
      pinMode (ENA, OUTPUT);
      pinMode (IN1, OUTPUT);
@@ -147,7 +147,9 @@ void user_loop() {
       cloopTime = currentTime; // Updates cloopTime
       // Pulse frequency (Hz) = 7.5Q, Q is flow rate in L/min.
      // l_hour = ((flow_frequency * 60 / (7.5))* (160/1353.8))*(153/247); // (Pulse frequency x 60 min) / 7.5Q = flowrate in L/hour
-        l_hour = ((flow_frequency/7.5) *1.7886178862/30.24556546990604)*60;
+      
+      l_hour = (0.86941 * ((flow_frequency*60/7.5) *1.7886178862/30.24556546990604)) + 65.740;
+      
       flow_frequency = 0; // Reset Counter
 
       if ((CtrlLoop == 1)){ //||(setPoint - l_hour > tolerance)){

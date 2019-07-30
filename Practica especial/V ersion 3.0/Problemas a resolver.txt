@@ -1,0 +1,15 @@
+Estoy trabajando con el PID y los problemas son los siguientes: 
+
+Durante el PID el Python me dice que la bomba B cuyo flujo máximo es de 77 L/H esta en 90 L/H
+
+El PID puede mandar una señal mayor a 255 (valor de PWM)? Como puedo evitar que haga esto?
+Pense en poner un if antes de asignar los valores a los motores y las variables pumpflowi.
+
+Si pongo en el  loop de control un delay de 60s par esperar que se estabilicen las bombas, el python al medir tira un 
+error de timeout
+
+El setpoint no debería poder sobrepasar los 100 y pico de L/H porque para que llegue a 100 practicamente necesito ambas 
+bombas funcionando a 100L/H
+
+
+Ver que pasa no solo arrancando de 0 y llegando a algun punto, sino también arrancando desde algun flujo =! de 0.

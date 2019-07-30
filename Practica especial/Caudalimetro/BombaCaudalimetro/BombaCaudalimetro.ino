@@ -16,7 +16,10 @@ int PinSensor = 2; //Sensor conectados en el pin 2
 float factorK = 7.5; //Conversión para el caudalímetro S201
 volatile int NumPulsos; //Cantidad de pulsos que mide en un determinado tiempo
 int VelocidadBomba = 255; //Velocidad a ordenarle a la bomba. Entre 0 y 255
-
+//float flujoA = 0; 
+//float flujoB = 0;
+float PWMA = 0; //(flujoA + 4.6)/ 0.4 ;
+float PWMB = 0; //(flujoB + 3.6)/ 0.3;
 
 
 
@@ -72,11 +75,11 @@ void loop() {
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW)  ;
   //Variando el próximo valor entre 0 y 255 varía la velocidad
-  analogWrite(ENA, VelocidadBomba);
+  analogWrite(ENA, PWMA);
 
   //MOVER MOTOR B
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW)  ;
   //Variando el próximo valor entre 0 y 255 varía la velocidad
-  analogWrite(ENB, VelocidadBomba);
+  analogWrite(ENB, PWMB);
 }

@@ -1,0 +1,210 @@
+Despues de calibrar las bombas y ver que eran distintas probé ver cuanto daba el caudal a la salida del 
+caudalimetro si conozco el flujo que estoy mandando para ello tome los siguientes valores:
+
+	-----------
+	Bomba A : pwm = 140 --> 59.60 L/H
+	Bomba B: pwm = 200 ---> 59.60 L/H
+
+	Espero un caudal de 120 L/H pero obtuve un caudal de 60 L/H
+
+	-----------
+	Bomba A: pwm = 160 -->68.5 L/H
+	Bomba B: pwm = 255 -->71.2 L/H
+	Espero un caudal de 140 L/H pero obtengo un caudal de 68.20 L/H
+	
+	-----------
+	Bomba A: pwm = 240 ---> 92.3 L/H
+	Bomba B: pwm = 160 ---> 49.54 L/H 
+	Espero un caudal de 142 L/H pero obtuve un caudal de 88.37 L/H 
+
+	------------
+	Bomba A: pwm = 100 ---> 35.37 L/H
+	Bomba B: pwm = 255 ---> 71.2 L/H 
+	Espero un caudal de 106.5 L/H pero obtuve un caudal de 53.47 L/H 
+	En este caso como el caudal de la bomba A es muy chico se observa como parte del flujo de la bomba B se va por
+	el canal de la bomba A impidiendo que esta bombee agua hacia el caudalimetro
+
+A partir de esto, plantee la duda de si la calibración realizada tiene sentido, ya que calibre las bombas con una manguera
+conectada directa al lugar a donde medí, y no tuve que pasar por el set up del caudalimetro. Esto va a a servir nada mas
+que para saber que flujo esta llegando a la T.
+
+Surgió tambien el tema de que las bombas parecerían tener un delay de algunos segundos hasta estabilizarse, con lo cual
+la calibracion puede volverse inutil y hay que realizarla de nuevo. Hay que idear un experimento donde pueda observar
+el tiempo de estabilizacion que tienen las bombas para poder luego calibrarlas. Se me ocurre que una opción es dejarla 
+funcionando un rato con la manguera dentro de la misma pileta y luego colocarla en el recipiente que uso para las
+mediciones. 
+
+Mientras, mandé una medición para ver que pasa si pongo las dos bombas a 70L/H y recopilo los datos del caudalimetro durante
+15 min. Al finalizar esto, metí la manguera en el medidior de agua y tome el tiempo que tardó en llenar un volumen de 
+300ml (13.77s) esto me devuelve un flujo de 78.43L/H
+
+Decidimos entonces no modificar por ahora las calibraciones de las bombas, pero si ver de comprar el tapon y hacer el
+experimento para ver si el flujo varía con el tiempo apreciablemente.
+
+
+CALIBRACION DEL CAUDALIMETRO
+
+Para la calibracion del caudalimetro fije las dos bombas en 70L/H y relicé una medicion durante 30 minutos en la que 
+grafique los valores registrados por el caudalimetro en función del tiempo. Para este caso obtuve
+
+	PF1 = 70L/H
+	PF2 = 70L/H
+	Mean_flow= 10.75 L/H
+	std_flow = 0 ???
+	estabilización = 1 min (aprox)
+
+	Medicion a mano: Medí 5 veces a mano y obtuve 
+	
+	Flujo_salida = [86.63 75.9 84.05 85.92 82.09]
+
+	Datos guardados con el nombre de pf1_pf2_70L/H
+
+Proximo paso fue llevar las bombas a 0 y al parecer las mangueras no se descargaron, luego fije los flujos de las bombas
+y medí durante 5 minutos. En principio espero que estabilice dentro del 1er minuto. Parecía haberse esatbilizado a los
+100 segundos, por eso volví a realizar la medicion pero en vez de medir durante 5 min lo hice durante 20 min. 
+
+	PFA = 50 L/H
+	PFB = 70 L/H
+	Mean_flow= 13.73 L/H
+	std_flow = 0 ???
+	estabilización = 100 seg (aprox)
+
+	Medicion a mano: Medí 5 veces a mano y obtuve 
+	
+	Flujo_salida = [72.72 67.63 64.90 56.60 80.18]
+
+	Datos guardados con el nombre de pf1_50_pf2_70
+
+Despues volvi a llevar las bombas a 0, las mangueras tampoco se descargaron y fije los fluidos de las bombas y medí 20 min
+nuevamente. Otra vez, parece lograr cierta estabilización a partir del minuto aunque cada tanto tiene picos que lo alejan
+de la media. 
+
+	PFA = 102 L/H
+	PFB = 70 L/H
+	Mean_flow= 53.16 L/H
+	std_flow = 0 ???
+	estabilización = 60 seg (aprox)
+
+	Medicion a mano: Medí 5 veces a mano y obtuve 
+	
+	Flujo_salida = [109.53 102.86 109.53 108.33 112.27]
+
+	Datos guardados con el nombre de pf1_102_pf2_70
+
+Repito el proceso
+
+	PFA = 90 L/H
+	PFB = 70 L/H
+	Mean_flow=  L/H
+	std_flow = 0 ???
+	estabilización =  seg (aprox)
+
+	Medicion a mano: Medí 5 veces a mano y obtuve 
+	
+	Flujo_salida = [104.25 94.82 103.65 107.14 107.14]
+
+	Datos guardados con el nombre de pf1_90_pf2_70
+
+Repito el proceso pero busco darle un valor muy bajo a una de las bombas para ver que pasa
+
+	PFA = 102 L/H
+	PFB = 30 L/H
+	Mean_flow=  L/H
+	std_flow = 0 ???
+	estabilización =  seg (aprox)
+
+	Medicion a mano: Medí 5 veces a mano y obtuve 
+	
+	Flujo_salida = [78.72 76 73.07 75.10 76.54]
+
+	Datos guardados con el nombre de pf1_102_pf2_30
+
+
+Despues de esto debería hacer un polyfit para hallar el polinomio que una los puntos y esa es la calibracion del caudalimetro
+Hecho esto obtuve los siguientes parámetros
+
+	pendiente = 0.86941
+	ordenada = 65.740
+	
+	OBS!! Esto esta tomado con alguna calibración previa del medidor, la línea de la variable l_hour en arduino era
+
+	l_hour = ((flow_frequency/7.5) *1.7886178862/30.24556546990604)*60;
+
+Reescribiendo la línea como l_hour = (flow_frequency * 60 /7.5) , vuelvo a los datos de anoche para realizar las mediciones
+que tomaron 20 min y asi poder hallar nuevamente los valores medios del caudalimetro
+
+Para la primer medición con esto modificado tome los siguientes datos: 
+
+	PFA = 102 L/H
+	PFB = 30 L/H
+	Mean_flow=  277.24 L/H
+	std_flow = 0 ???
+	estabilización =  seg (aprox)
+
+	Medicion a mano: Medí 5 veces a mano y obtuve 
+	
+	Flujo_salida = []
+
+	Datos guardados con el nombre de pf1_102_pf2_30_parte2
+
+
+Finalmente decidí que no hace falta realizar de nuevo todas las mediciones y modifico la calibración del caudalimetro
+directamente sobre la anterior, de esta manera la variable l_hour quedo de la forma:  
+
+	l_hour = (0.86941 * ((flow_frequency*60/7.5) *1.7886178862/30.24556546990604)) + 65.740;
+
+
+La primer medición es idéntica a las dos anteriores pero con 10 minutos de medicion
+
+	PFA = 102 L/H
+	PFB = 30 L/H
+	Mean_flow=  80.32 L/H  (sacando el pico extraño y la parte previa a la estabilización )
+	std_flow = 4.27
+	estabilización =  100 seg (aprox)
+
+	Medicion a mano: Medí 1 veces a mano y obtuve 
+	
+	Flujo_salida = [77.14]
+
+	Datos guardados con el nombre de pf1_102_pf2_30 en la carpeta todo calibrado
+
+realicé una segunda medición por las dudas, de nuevo de 10 minutos con los siguientes valores: 
+
+	PFA = 70 L/H
+	PFB = 70 L/H
+	Mean_flow=  85.20336 L/H  (sacando el pico extraño y la parte previa a la estabilización )
+	std_flow = 5.1918
+	estabilización =  50 seg (aprox)
+
+	que es muy similar a lo medido en las 5 mediciones del primer set de anoche. 
+
+	Datos guardados con el nombre de pf1_70_pf2_70 en la carpeta todo calibrado
+
+
+Volví a hacer la misma medición pero con 20 minutos porque parecia esatble alrededor de los 85 L/H y debería haberlo 
+estado alrededor de los 100. Nuevamente el mean esta en 89.33 y el std en 7.6 lo cual es cercano a 100 pero no llega. 
+
+	OBS!!!
+
+	El tema es que ambas bombas estan trabajando segun el python cerca de 100 L/H lo cual es imposible porque 
+	la bomba B no puede enviar mas de 77L/H. !!!!!!!!!
+
+Deberíamos modificar el script de arduino para evitar que el valor de PWM supere 255.
+
+Voy a repetir la medición cambiando el delay dentro del loop de control a 60000 ms para que tengan tiempo las bombas
+de estabilizarse y chequear si esto hace que las bombas paren o no.
+
+	OBS!!! TIRA ERROR DE TIMEOUT
+
+Voy a repetir la medición pero cambie el delay a 1s a ver que pasa, en principio esta corriendo. 
+
+	setpoint_100_kp_1_ki_kd_0_parte3 en la carpeta PID.
+
+	OBS! Lo corte antes porque estaba tardando mucho, tengo aprox la mitad de los puntos que quería pero vi que aunque
+	le diera un segundo de delay las cosas no cambiaron mucho. 
+
+
+Vuelvo a un delay de 100ms pero voy a probar poner un setpoint mas bajo a ver que pasa, todo lo demás queda en iguales
+condiciones. Despues voy a ver en función de esto que pasa si cambio KP o las demas constantes
+
+	setpoint_80_kp_1_ki_kd_0 en la carpeta PID.

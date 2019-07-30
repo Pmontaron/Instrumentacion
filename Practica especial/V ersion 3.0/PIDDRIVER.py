@@ -11,6 +11,7 @@ from lantz import Q_
 import time
 from datetime import datetime
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 #now = datetime.now() # current date and time
@@ -27,12 +28,13 @@ class FLOWPIDDriver(INODriver):
     kp=QuantityFeat('KP')
     ki=QuantityFeat('KI')
     kd=QuantityFeat('KD')
-    setpoint=QuantityFeat('SP', units='L/hour')
+    setpoint=QuantityFeat('SP', units='L/hour', limits = (60,1000))
     flowvalue = QuantityFeat('FV', units = 'L/hour', setter=False) # Si agrego este argumento: setter=False, entonces la funcion en el sketch de Arduino se genera sin setter.
 #    valve_opened = BoolDictFeat('Valve_Opened', keys=(1, 2))
     pumpflow1 = QuantityFeat('PF1', units = 'L/hour' , limits = (0,102.5)) # trabaja entre 27 y 102.5 l/h 
     pumpflow2 = QuantityFeat('PF2', units = 'L/hour' , limits = (0,72.9)) # Trabaja entre 17.94 y 72.9 L/H
    
+    # LOs valores de flujo negativo estan para que las bombas se apaguen
 ''' Hay dos maneras de escribir que las valvulas se puedan abrir o cerrar
 en ambos casos conviene ser especifico con lo que hace la función. La primer 
 forma consiste en dar dos funciones distintas, una para cada valvula que valga
@@ -147,19 +149,21 @@ if __name__ == '__main__':
     
     
 
-    board.setpoint = 100
-    board.cl= False
-    board.pumpflow1 = 70
-    board.pumpflow2 = 70
+    board.setpoint = 80
+    board.cl= True
+#    board.pumpflow1= 0
+#    board.pumpflow2 = 0
+#    board.pumpflow1 = 70
+#    board.pumpflow2 = 70  
 
  # Cantidad de segundos que quiero correr el programa dividios el paso de tiempo del sleep da el valor al que i debe ser menor para correr
     i = 1
     interval = 1
-    Tolerancia = (0.2426513536134539)*60
+   # Tolerancia = 
     flow_data=[]
     t1_start = time.perf_counter()
     i = 0.01
-    while i<100:    
+    while i<1200:   
         t1_stop = time.perf_counter()
         flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
         t1_partial= time.perf_counter()
@@ -172,11 +176,58 @@ if __name__ == '__main__':
         tiempo.append(flow_data[j][3]-flow_data[0][3])
         data.append(flow_data[j][0])
         
-    plt.plot(tiempo,data)
-    plt.title("Flujo de bombas fijo 60 L/h")
-    plt.xlabel('tiempo [seg]')
-    plt.ylabel('flujo [L/h]')
-    plt.show()
+mean_flow = np.mean(data)
+std_flow = np.std(data)
     
 ''' En esta parte de arriba, podemos medir en un intervalo de tiempo como cambia el flujo del caudalimetro, y de las bombas
 con o sin pid.'''
+
+
+#%% Esta parte sirve para graficar el flujo en función del tiempo sin el pid y con el flujo de bombas fijo
+
+plt.plot(tiempo,data)
+plt.title("Flujo bomba A = {} , Flujo bomba B = {}  ".format(board.pumpflow1 , board.pumpflow2))
+plt.xlabel('tiempo [seg]')
+plt.ylabel('flujo [L/h]')
+plt.show()
+
+#%% Esta parte sirve para graficar el flujo en función del tiempo para el PID
+
+plt.figure()
+plt.plot(tiempo,data)
+plt.title("Set point = {} , KP = {} ; KI = {} ; KD = {} ".format(board.setpoint, board.kp, board.ki, board.kd))
+plt.xlabel('tiempo [seg]')
+plt.ylabel('flujo [L/h]')
+plt.show()
+
+# esta otra parte sirve para ver como varió el valor del flujo de las bombas durante el mismo tiempo
+
+data_bombaA = []
+data_bombaB = []
+
+for j in range(len(flow_data)):
+    data_bombaA.append(flow_data[j][1])
+    data_bombaB.append(flow_data[j][2])
+    
+plt.figure()
+plt.plot(tiempo,data_bombaA,label='Flujo A')
+plt.plot(tiempo,data_bombaB, label= 'Flujo B')
+plt.xlabel('tiempo [seg]')
+plt.ylabel('flujo [L/h]')
+plt.legend()
+plt.show()
+
+#%% Esta parte esta para analizar los datos achicandolos y filtrando cosas que no nos interesan
+
+
+
+data_estable = data[100:500]
+
+plt.plot(tiempo[100:500],data_estable)
+plt.title("Flujo B1= 102L/H y Flujo B2 = 70 L/h")
+plt.xlabel('tiempo [seg]')
+plt.ylabel('flujo [L/h]')
+plt.show()
+
+mean_flow_estable = np.mean(data_estable)
+std_flow_estable = np.std(data_estable)
