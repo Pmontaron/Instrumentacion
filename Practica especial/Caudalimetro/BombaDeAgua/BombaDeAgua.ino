@@ -25,11 +25,11 @@ void loop() {
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW)  ;
   //Variando el próximo valor entre 0 y 255 varía la velocidad
-  analogWrite(ENA, 0);
+  analogWrite(ENA, 125.5);
 
   //MOVER MOTOR B
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW)  ;
   //Variando el próximo valor entre 0 y 255 varía la velocidad
-  analogWrite(ENB,0);
+  analogWrite(ENB,220.3);
 }

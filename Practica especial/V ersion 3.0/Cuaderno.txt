@@ -224,4 +224,90 @@ de KD a 5 y tampoco note diferencia. Finalmente, con el archivo
 	20 minutos.
 
 
+Probé cambiar el programa del PID al siguiente: 
 
+	if (CtrlLoop == 1){
+        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
+        output = computePID(input);
+        delay(100);
+        analogWrite(ENA, pump_flow1*(1+output/l_hour));
+        analogWrite(ENB, pump_flow2*(1+output/l_hour)); //control the motor based on PID value
+        pump_flow1= pump_flow1*(1+output/l_hour);
+        pump_flow2= pump_flow2*(1+output/l_hour);
+        delay(100);
+        
+      	}
+
+voy a volver a probar algunas mediciones partiendo de algun valor de flujo distinto de 0 a ver que pasa.
+Saltó el siguiente error: 
+	Traceback (most recent call last):
+
+  	File "<ipython-input-1-bf435eacf237>", line 179, in <module>
+    		flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\pimpmyclass\props.py", line 82, in _get_
+   		value = self.get(instance, objtype)
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\pimpmyclass\props.py", line 348, in get
+    		return super().get(instance, objtype)
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\pimpmyclass\props.py", line 516, in get
+    		return super().get(instance, owner)
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\pimpmyclass\props.py", line 413, in get
+   	 	raise e
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\pimpmyclass\props.py", line 408, in get
+    		value = transform(value)
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\lantz\core\processors.py", line 563, in _call_
+		value = func(value)
+
+  	File "C:\Users\Pato\Anaconda3\envs\lantz\lib\site-packages\lantz\core\processors.py", line 135, in _inner
+    		return Q_(float(value), units)
+
+	ValueError: could not convert string to float: 'ovf'
+
+
+Volví al programa anterior de arduino y probe dar 3 valores de KP KI KD, lo guarde bajo el nombre: 
+
+		setpoint_80_kp_1_ki_5_kd_2 en la carpeta PID
+
+Agregue otro set de datos con Kp=1 
+
+		setpoint_80_kp_1_ki_0_kd_0_parte2 en la carpeta PID
+
+Agregue varias lineas para que vayan printeando a medida que avanza el programa para saber en que etapa me encuentro y
+una condición para que cuando el valor de flujo se encuentre en rango del setpoint mas menos 10% corte el PID y mantenga 
+el flujo que esta teniendo en ese momento. Con esto vuelvo a realizar una medición para ver que pasa y que tan rapido 
+converge.
+
+		setpoint_80_kp_1_ki_0_kd_0_parte3 en la carpeta PID
+		setpoint_80_kp_1_ki_0_kd_0_parte4 en la carpeta PID
+
+
+Probé cambiar el programa del PID a 
+
+	 if (CtrlLoop == 1){
+        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
+        output = computePID(input);
+        delay(100);
+        analogWrite(ENA, output);
+        analogWrite(ENB, output); //control the motor based on PID value
+        pump_flow1= pump_flow1*(1+output/l_hour);
+        pump_flow2= pump_flow2*(1+output/l_hour);
+        delay(100);
+        
+      }
+      
+
+      else {}
+
+	y guarde los resultados en: 
+
+	setpoint_80_kp_10_ki_kd_0_parte2 en la carpeta PID
+
+Volví al loop de control de siempre y no setee el valor inicial de las bombas. El arduino las hace arrancar en 0.
+Note que al setear el setpoint uan de las bombas se prende ycomienza a funcionar. Los datos los guarde en:  
+
+	setpoint_80_kp_10_ki_kd_0_parte3 en la carpeta PID

@@ -15,3 +15,7 @@ bombas funcionando a 100L/H
 Ver que pasa no solo arrancando de 0 y llegando a algun punto, sino también arrancando desde algun flujo =! de 0.
 
 Puse KP=10 y me salen flujos de  670 L/H !
+
+
+Seteo las bombas en 0 al principio y por algún motivo empiezan a bombear aunque la variable para entrar al loop de control
+este desactivada

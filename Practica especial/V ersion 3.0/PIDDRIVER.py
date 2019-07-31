@@ -9,7 +9,7 @@ from lantz.ino import INODriver, BoolFeat, QuantityFeat, BoolDictFeat, QuantityD
 from lantz.qt import Backend, Frontend, InstrumentSlot, QtCore
 from lantz import Q_
 import time
-from datetime import datetime
+import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -31,8 +31,8 @@ class FLOWPIDDriver(INODriver):
     setpoint=QuantityFeat('SP', units='L/hour', limits = (60,1000))
     flowvalue = QuantityFeat('FV', units = 'L/hour', setter=False) # Si agrego este argumento: setter=False, entonces la funcion en el sketch de Arduino se genera sin setter.
 #    valve_opened = BoolDictFeat('Valve_Opened', keys=(1, 2))
-    pumpflow1 = QuantityFeat('PF1', units = 'L/hour' , limits = (0,102.5)) # trabaja entre 27 y 102.5 l/h 
-    pumpflow2 = QuantityFeat('PF2', units = 'L/hour' , limits = (0,72.9)) # Trabaja entre 17.94 y 72.9 L/H
+    pumpflow1 = QuantityFeat('PF1', units = 'L/hour' , limits = (-4.60,102.5)) # trabaja entre 27 y 102.5 l/h 
+    pumpflow2 = QuantityFeat('PF2', units = 'L/hour' , limits = (-3.60,72.9)) # Trabaja entre 17.94 y 72.9 L/H
    
     # LOs valores de flujo negativo estan para que las bombas se apaguen
 ''' Hay dos maneras de escribir que las valvulas se puedan abrir o cerrar
@@ -75,7 +75,7 @@ True/False, toma los valores 1 o 2 dependiendo de que valvula quiero usar.  '''
 #        
 #    def set_set_point(self):
 #        self.board.set_point = self.board.Set_Point
-#
+#   
 #    def get_set_point(self):
 #        print(self.board.Set_Point)
 #        
@@ -115,74 +115,75 @@ if __name__ == '__main__':
     board = FLOWPIDDriver.via_packfile('FLOWPIDDriver.pack.yaml', check_update=True)
     board.initialize()  
     
-    print(board.kp)
-    board.kp = 1
-    print(board.kp)
-    
-    print(board.ki)
-    board.ki = 0
-    print(board.ki)
-    
-    print(board.kd)
-    board.kd = 5
-    print(board.kd)
-    
-    print(board.setpoint)
-    board.setpoint = 0
-    print(board.setpoint)
-    
-    print(board.cl)
-    board.cl= False
-    print(board.cl)
-#    
-    print(board.pumpflow1) 
-    board.pumpflow1 = 70
-    print(board.pumpflow1) 
-    
-    print(board.pumpflow2)
-    
-    board.pumpflow2 = 30
-    print(board.pumpflow2) 
-    
-#    
-#    print(board.flowvalue)
-    
-    board.setpoint = 80
-
-#    board.pumpflow1= 0
-#    board.pumpflow2 = 0
-#    board.pumpflow1 = 70
-#    board.pumpflow2 = 70  
-
- # Cantidad de segundos que quiero correr el programa dividios el paso de tiempo del sleep da el valor al que i debe ser menor para correr
+#%% Con esta parte junto los datos
+     # Cantidad de segundos que quiero correr el programa dividios el paso de tiempo del sleep da el valor al que i debe ser menor para correr
     i = 1
     interval = 1
-   # Tolerancia = 
+    tolerance = 10*board.setpoint/100;
     flow_data=[]
-    t1_start = time.perf_counter()
-    
+    tiempo = []
+    data = []
     n=0
-    while n<300:
+    k=0
+    
+    tiempo_enSP = 120
+    cant_mediciones_prog = 1200
+    cant_med_previas = 300
+    
+    board.cl= False
+    
+    #board.pumpflow1 = 0
+    PF1_inicial = print(board.pumpflow1)
+
+    #board.pumpflow2 = 0
+    PF2_inicial = print(board.pumpflow2)
+    
+    board.kp = 10
+    KP = print(board.kp)
+
+    board.ki = 0
+    KI = print(board.ki)
+
+    board.kd = 0
+    KD = print(board.kd)
+
+    board.setpoint = 80
+    SET_POINT = print(board.setpoint)
+
+    t1_start = time.perf_counter()
+    now = datetime.datetime.now()
+    print('Las bombas arrancaron a andar a las {}'.format(now))
+    
+    while n<cant_med_previas:
         t1_stop = time.perf_counter()
         flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
         t1_partial= time.perf_counter()
         time.sleep(interval)
         n=n+1
         
-        
+    print('Pasaron {} seg desde que se prendieron las bombas'.format(n))   
         
     t1_start = time.perf_counter()
     
     board.cl= True
-    while i<1200:   
+    print('Enciendo el loop de control')
+    while i<cant_mediciones_prog:   
         t1_stop = time.perf_counter()
         flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
         t1_partial= time.perf_counter()
         time.sleep(interval)
         i= i+1
-        
-    tiempo = []
-    data = []
+        if any( [i == 300, i == 600, i == 900, i == 1200 ] ):
+            print('pasaron {} segundos desde las {}'.format(i+n,now))
+            
+        if board.setpoint - board.flowvalue < tolerance:
+            k=k+1
+            if k==tiempo_enSP :
+                board.cl = False
+                print('El valor de flujo se encuentra dentro del valor de setpoint ')   
+                break
+            
+    
     for j in range(len(flow_data)):
         tiempo.append(flow_data[j][3]-flow_data[0][3])
         data.append(flow_data[j][0])
@@ -190,9 +191,6 @@ if __name__ == '__main__':
 mean_flow = np.mean(data)
 std_flow = np.std(data)
     
-''' En esta parte de arriba, podemos medir en un intervalo de tiempo como cambia el flujo del caudalimetro, y de las bombas
-con o sin pid.'''
-
 
 #%% Esta parte sirve para graficar el flujo en función del tiempo sin el pid y con el flujo de bombas fijo
 
