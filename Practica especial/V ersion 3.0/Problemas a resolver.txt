@@ -13,3 +13,5 @@ bombas funcionando a 100L/H
 
 
 Ver que pasa no solo arrancando de 0 y llegando a algun punto, sino también arrancando desde algun flujo =! de 0.
+
+Puse KP=10 y me salen flujos de  670 L/H !

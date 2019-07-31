@@ -124,7 +124,7 @@ if __name__ == '__main__':
     print(board.ki)
     
     print(board.kd)
-    board.kd = 0
+    board.kd = 5
     print(board.kd)
     
     print(board.setpoint)
@@ -136,21 +136,19 @@ if __name__ == '__main__':
     print(board.cl)
 #    
     print(board.pumpflow1) 
-    board.pumpflow1 = 0
+    board.pumpflow1 = 70
     print(board.pumpflow1) 
     
     print(board.pumpflow2)
     
-    board.pumpflow2 = 0
+    board.pumpflow2 = 30
     print(board.pumpflow2) 
     
 #    
 #    print(board.flowvalue)
     
-    
-
     board.setpoint = 80
-    board.cl= True
+
 #    board.pumpflow1= 0
 #    board.pumpflow2 = 0
 #    board.pumpflow1 = 70
@@ -162,7 +160,20 @@ if __name__ == '__main__':
    # Tolerancia = 
     flow_data=[]
     t1_start = time.perf_counter()
-    i = 0.01
+    
+    n=0
+    while n<300:
+        t1_stop = time.perf_counter()
+        flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
+        t1_partial= time.perf_counter()
+        time.sleep(interval)
+        n=n+1
+        
+        
+        
+    t1_start = time.perf_counter()
+    
+    board.cl= True
     while i<1200:   
         t1_stop = time.perf_counter()
         flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])

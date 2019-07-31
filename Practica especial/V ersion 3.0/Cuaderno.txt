@@ -208,3 +208,20 @@ Vuelvo a un delay de 100ms pero voy a probar poner un setpoint mas bajo a ver qu
 condiciones. Despues voy a ver en función de esto que pasa si cambio KP o las demas constantes
 
 	setpoint_80_kp_1_ki_kd_0 en la carpeta PID.
+
+Despues de esto probe pasar el KP a 10 pero observe valores de los flujos de bombas muy altos. Debido a esto volvi a 
+un valor de Kp igual a 1 y probé  dar un valor de 1 al KD pero a priori no note mucha diferencia. Luego aumente el valor
+de KD a 5 y tampoco note diferencia. Finalmente, con el archivo 
+
+	setpoint_80_kp_1_ki_kd_5 _parte2 en la carpeta PID.
+
+	Lo que hice fue hacer arrancar las bombas en valores distintos de 0, 
+
+	PF1 = 70
+	PF2 = 30 
+
+	y dejarlas andar por 300 s ,luego de esto prendí el loop de control y miré que pasa de ahi en adelante durante
+	20 minutos.
+
+
+
