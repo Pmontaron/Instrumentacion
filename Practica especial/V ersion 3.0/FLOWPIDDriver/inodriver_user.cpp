@@ -44,12 +44,14 @@ int ENA = 10;
 int IN1 = 9;
 int IN2 = 8;
 float pump_flow1=0;
+float newvalue1;
 
 //Bomba 2
 int  ENB = 5;
 int IN3 = 7;
 int IN4 = 6;
 float pump_flow2=0;
+float newvalue2;
 
 // Variable que determina si activo el loop de control o no
 bool CtrlLoop = 0;
@@ -152,32 +154,34 @@ void user_loop() {
       
       flow_frequency = 0; // Reset Counter
 
-      if ((CtrlLoop == 1)||(setPoint - l_hour > tolerance)){
-        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
-        output = computePID(input);
-        delay(100);
-        analogWrite(ENA, output);
-        analogWrite(ENB, output); //control the motor based on PID value
-        pump_flow1=output;
-        pump_flow2=output;
-      }
-
-      else {}
- 
-//      if (CtrlLoop == 1){
+//      if ((CtrlLoop == 1)||(setPoint - l_hour > tolerance)){
 //        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
 //        output = computePID(input);
 //        delay(100);
 //        analogWrite(ENA, output);
 //        analogWrite(ENB, output); //control the motor based on PID value
-//        pump_flow1= pump_flow1*(1+output/l_hour);
-//        pump_flow2= pump_flow2*(1+output/l_hour);
-//        delay(100);
-//        
+//        pump_flow1=output;
+//        pump_flow2=output;
 //      }
-//      
 //
 //      else {}
+ 
+      if (CtrlLoop == 1){
+        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
+        output = computePID(input);
+        delay(100);
+        analogWrite(ENA, output);
+        analogWrite(ENB, output); //control the motor based on PID value
+        newvalue1=pump_flow1*(1+output/l_hour);
+        newvalue2=pump_flow2*(1+output/l_hour);
+        pump_flow1=newvalue1;
+        pump_flow2=newvalue2;
+        delay(1000);
+        
+      }
+      
+
+      else {}
       
 
    }
