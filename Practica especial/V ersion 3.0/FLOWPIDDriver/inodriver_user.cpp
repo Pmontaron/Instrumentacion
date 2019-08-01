@@ -154,36 +154,17 @@ void user_loop() {
       
       flow_frequency = 0; // Reset Counter
 
-//      if ((CtrlLoop == 1)||(setPoint - l_hour > tolerance)){
-//        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
-//        output = computePID(input);
-//        delay(100);
-//        analogWrite(ENA, output);
-//        analogWrite(ENB, output); //control the motor based on PID value
-//        pump_flow1=output;
-//        pump_flow2=output;
-//      }
-//
-//      else {}
- 
-      if (CtrlLoop == 1){
-        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
-        output = computePID(input);
-        delay(100);
-        analogWrite(ENA, output);
-        analogWrite(ENB, output); //control the motor based on PID value
-        newvalue1=pump_flow1*(1+output/l_hour);
-        newvalue2=pump_flow2*(1+output/l_hour);
-        pump_flow1=newvalue1;
-        pump_flow2=newvalue2;
-        delay(1000);
-        
+      if ((CtrlLoop == 1)) { //{||(setPoint - l_hour > tolerance)){
+        output = computePID(l_hour);
+        if (output > 102.5) {
+          output = 102.5;
+        }
+        pump_flow1=output;
+        analogWrite(ENA, (pump_flow1 + 4.60)/0.42);
+       
+       //pump_flow2=output;
       }
       
-
-      else {}
-      
-
    }
   
 }

@@ -19,3 +19,5 @@ Puse KP=10 y me salen flujos de  670 L/H !
 
 Seteo las bombas en 0 al principio y por algún motivo empiezan a bombear aunque la variable para entrar al loop de control
 este desactivada
+
+Contar sobre los 2 programas? EL que usamos para medir datos tambien?

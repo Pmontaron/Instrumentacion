@@ -311,3 +311,31 @@ Volví al loop de control de siempre y no setee el valor inicial de las bombas. E
 Note que al setear el setpoint uan de las bombas se prende ycomienza a funcionar. Los datos los guarde en:  
 
 	setpoint_80_kp_10_ki_kd_0_parte3 en la carpeta PID
+
+
+Nuevamente, cambié el loop de control a 
+
+	      if (CtrlLoop == 1){
+        input = setPoint - l_hour;                //Diferencia entre el set point y lo medido
+        output = computePID(input);
+        delay(100);
+        analogWrite(ENA, output);
+        analogWrite(ENB, output); //control the motor based on PID value
+        newvalue1=pump_flow1*(1+output/l_hour);
+        newvalue2=pump_flow2*(1+output/l_hour);
+        pump_flow1=newvalue1;
+        pump_flow2=newvalue2;
+        delay(1000);
+        
+      }
+
+	y guardé los datos como 
+
+	setpoint_80_kp_10_ki_kd_0_parte4
+
+
+Volvi al loop de control original y guarde un set mas de datos
+
+	setpoint_80_kp_10_ki_kd_0_parte5
+
+

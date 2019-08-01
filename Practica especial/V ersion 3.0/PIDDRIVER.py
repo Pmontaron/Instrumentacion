@@ -133,23 +133,23 @@ if __name__ == '__main__':
     board.cl= False
     
     #board.pumpflow1 = 0
-    PF1_inicial = print(board.pumpflow1)
-
-    #board.pumpflow2 = 0
-    PF2_inicial = print(board.pumpflow2)
     
-    board.kp = 10
-    KP = print(board.kp)
+    #Esta bomba se va a mantener estable a lo largo del PID. 
+    board.pumpflow2 = 50
+
+    board.kp = 1
+    
 
     board.ki = 0
-    KI = print(board.ki)
 
     board.kd = 0
-    KD = print(board.kd)
 
     board.setpoint = 80
-    SET_POINT = print(board.setpoint)
 
+    # Aca guardo los datos del set medido.
+    datos = [board.kp, board.ki,board.kd, board.setpoint.m,board.pumpflow1.m,board.pumpflow2.m]
+    
+    
     t1_start = time.perf_counter()
     now = datetime.datetime.now()
     print('Las bombas arrancaron a andar a las {}'.format(now))
