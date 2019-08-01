@@ -339,3 +339,52 @@ Volvi al loop de control original y guarde un set mas de datos
 	setpoint_80_kp_10_ki_kd_0_parte5
 
 
+Despues de hablar con Hernan, corregí el programa de arduino, finalmente el loop de control quedo de la siguinte manera: 
+
+	if ((CtrlLoop == 1)) { //{||(setPoint - l_hour > tolerance)){
+        output = computePID(l_hour);
+        if (output > 102.5){
+          output = 102.5;
+        }
+        if (output < 40){
+          output = 40;
+        }
+        pump_flow1=output;
+
+	La idea es que solo una bomba cambie su valor mientras la otra se mueva de manera constante, y necesito que el 
+output cuando va a parar a la línea que hace mover la bomba este dentro del rango de PWM aceptado. 
+
+
+Con este nuevo programa hice algunas mediciones de Prueba pero ví que modificaba muy poco el valor de flujo y esto hacia
+que la bomba no arrancara. Dandole un valor minimo que puede tener el output, tomé una primer medicion: 
+
+	setpoint_120_kp_1_ki_0_kd_0 EN la carpeta PID corregido
+	
+	Con este set de datos, el programa no me dijo que hubiese llegado al setpoint
+
+Hago una prueba con un KP de 10 
+
+	setpoint_120_kp_10_ki_0_kd_0
+
+	En esta medición se llegó al setpoint dentro de la tolerancia pero tiene mucho ruido y un desvio estandar del 20%
+
+Voy a hacer una nueva medicion usando un KI =1 además de un KP = 1
+
+	setpoint_120_kp_1_ki_1_kd_0 
+
+	Aca veo que va teniendo un pco mas de pinta pero igualmente se pasa del setpoint, y los std son muy grandes
+
+
+Encontré un problema con el programa en python, donde hacía que aunque estuviera fuera del setpoint, el programa terminara
+igual porque el contador no se reseteaba asi que repetí la primer medicion. A partir de ahora meto todo en una carpeta neuva
+
+
+	El primer set de datos es 
+
+	setpoint_130_kp_1_ki_0_kd_0
+
+	Donde se puede observar un poco la forma de lo que esperamos y dentrod e todo el valor al que converge es el deseado.
+
+Agrego KI = 1.
+
+	setpoint_130_kp_1_ki_1_kd_0

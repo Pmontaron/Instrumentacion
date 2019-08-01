@@ -119,32 +119,31 @@ if __name__ == '__main__':
      # Cantidad de segundos que quiero correr el programa dividios el paso de tiempo del sleep da el valor al que i debe ser menor para correr
     i = 1
     interval = 1
-    tolerance = 10*board.setpoint/100;
     flow_data=[]
     tiempo = []
     data = []
     n=0
     k=0
     
-    tiempo_enSP = 120
-    cant_mediciones_prog = 1200
-    cant_med_previas = 300
+    tiempo_enSP = 300
+    cant_mediciones_prog = 1500
+    cant_med_previas = 200
     
     board.cl= False
     
-    #board.pumpflow1 = 0
+    board.pumpflow1 = -4.6
     
     #Esta bomba se va a mantener estable a lo largo del PID. 
     board.pumpflow2 = 50
 
     board.kp = 1
     
-
-    board.ki = 0
+    board.ki = 1
 
     board.kd = 0
 
-    board.setpoint = 80
+    board.setpoint = 130
+    tolerance = 10*board.setpoint/100;
 
     # Aca guardo los datos del set medido.
     datos = [board.kp, board.ki,board.kd, board.setpoint.m,board.pumpflow1.m,board.pumpflow2.m]
@@ -168,22 +167,25 @@ if __name__ == '__main__':
     board.cl= True
     print('Enciendo el loop de control')
     while i<cant_mediciones_prog:   
+        time.sleep(interval)
         t1_stop = time.perf_counter()
         flow_data.append([board.flowvalue.m,board.pumpflow1.m,board.pumpflow2.m,t1_stop])
         t1_partial= time.perf_counter()
-        time.sleep(interval)
         i= i+1
         if any( [i == 300, i == 600, i == 900, i == 1200 ] ):
             print('pasaron {} segundos desde las {}'.format(i+n,now))
-            
-        if board.setpoint - board.flowvalue < tolerance:
+        
+        diff = abs(board.setpoint - board.flowvalue) 
+        if  diff < tolerance:
             k=k+1
             if k==tiempo_enSP :
                 board.cl = False
                 print('El valor de flujo se encuentra dentro del valor de setpoint ')   
                 break
+        else: 
+            k = 0
             
-    
+    board.cl = False
     for j in range(len(flow_data)):
         tiempo.append(flow_data[j][3]-flow_data[0][3])
         data.append(flow_data[j][0])
@@ -204,7 +206,7 @@ plt.show()
 
 plt.figure()
 plt.plot(tiempo,data)
-plt.title("Set point = {} , KP = {} ; KI = {} ; KD = {} ".format(board.setpoint, board.kp, board.ki, board.kd))
+plt.title("Flujo total. Set point = {} , KP = {} ; KI = {} ; KD = {} ".format(datos[3], datos[0], datos[1], datos[2]))
 plt.xlabel('tiempo [seg]')
 plt.ylabel('flujo [L/h]')
 plt.show()
@@ -219,8 +221,8 @@ for j in range(len(flow_data)):
     data_bombaB.append(flow_data[j][2])
     
 plt.figure()
-plt.plot(tiempo,data_bombaA,label='Flujo A')
-plt.plot(tiempo,data_bombaB, label= 'Flujo B')
+plt.plot(tiempo,data_bombaA,label='Flujo Bomba A')
+plt.plot(tiempo,data_bombaB, label= 'Flujo Bomba B')
 plt.xlabel('tiempo [seg]')
 plt.ylabel('flujo [L/h]')
 plt.legend()
@@ -230,10 +232,11 @@ plt.show()
 
 
 
-data_estable = data[100:500]
+data_estable = data[cant_med_previas:]
 
-plt.plot(tiempo[100:500],data_estable)
-plt.title("Flujo B1= 102L/H y Flujo B2 = 70 L/h")
+plt.figure()
+plt.plot(tiempo[cant_med_previas:],data_estable)
+plt.title("Flujo PID. Set point = {} , KP = {} ; KI = {} ; KD = {} ".format(datos[3], datos[0], datos[1], datos[2]))
 plt.xlabel('tiempo [seg]')
 plt.ylabel('flujo [L/h]')
 plt.show()

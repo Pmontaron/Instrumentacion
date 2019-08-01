@@ -1,0 +1,87 @@
+Ideas a no olvidar de poner en algun lado: 
+
+No importa que la calibración la hayamos hecho contra aire y que después las bombas estén en contacto con agua porque
+finalmente el que se va a encargar de regular el valor de flujo que queremos es el caudalimetro.
+
+Motivación: 
+
+Trabajo en un secundario y este año llegó la reforma educativa a 5to año y se les encargó a los chicos del colegio relizar
+un proyecto. Les surgió la idea de hacer una hidroponia y me pareció que estaba bueno poder automatizar el proceso de 
+riego de la misma y es por eso que elegimos este proyecto. 
+Una hidroponia es un método de cultivo en el cual se reemplaza la tierra por una mezcla de agua y minerales diseñados para 
+nutrir la planta. La ventaja que esto tiene es que aumenta mucho la cantidad de cultivo por metro cuadrado y permite
+cultivar en prácticamente cualquier lado sin generar un gran gasto de agua ya que la misma se encuentra en un sistema
+cerrado.
+
+Objetivos:
+
+En base a esto, nuestro objetivo fue automatizar el sistema de riego de la hidroponia y eso lo vamos a hacer mediante
+un control automático de bombeo y del flujo en el sistema cerrado
+
+Set up: 
+
+Para ello vamos a utilizar un Arduino Mega que va a alimentar al sensor de flujo, y dos bombas de agua que van a ser
+alimentadas por una fuente externa de 5V conectada a un módulo L298N. Para poder regular los flujos que envían las bombas
+utilizamos un PWM. 
+
+Bombas de agua: 
+
+	Como pudieron ver en la foto anterior, las bombas estan diferenciadas ya que los rango de flujo en los que 
+	trabajaban eran distintos. Ambas se calibraron con una manguera y un vaso de precipitado grande. Para cada bomba 
+	se tomaron distintos valores de PWM y se averiguó el flujo que propocionaba cada valor. Linealizando esta relación 
+	entre flujo y el valor del PWM, caracterizamos las bombas.
+	Las bombas trabajan en un rango de (27 - 103) L/H y (18 - 76 )L/H
+
+Caudalimetro: 
+
+	El siguiente paso, fue caracterizar el caudalímetro, para ello se conectaron las dos bombas ya calibradas,
+	se las puso a funcionar con un flujo conocido y se comparó tanto con el valor de flujo otorgado por el 
+	caudalímetro como con el valor de flujo que se midió luego de tomar las mediciones con el vaso de precipitado
+ 	y un cronómetro. Inicialmente, la diferencia entre el flujo que medimos nosotros a la salida con el flujo que 
+	mandábamos a la entrada nos sorprendió porque era mucho menor al esperado. Esto es probable que se deba a que la 
+	calibración la hicimos en aire y debido al setup que tenemos, las bombas compiten entre ellas para llegar al 
+	caudalimetro. Finalmente, se linealizó el comportamiento de los datos observados a la salida con los valores 
+	devueltos por el caudalímetro y se hallaron los parámetros correspondientes. 
+	Sobre la calibración de las bombas no nos preocupamos mucho porque finalmente el que va a corregir el valor de las
+	bombas para que se alcance el nivel deseado el el caudalímetro. 
+
+Código para el manejo de los instrumentos: 
+
+	En cuanto al código separamos en dos grandes partes,
+		En Python, se desarrolló todo el driver para el arduino y está pensado para que sea solo usado por
+		el usuario.Una vez que se programó todo lo de arduino y nuestro sistema esatba en funcionamiento, 
+		el programa de arduino no se tocó mas y solo nos manejamos con el Python. 
+
+		Por el otro lado, el código en Arduino está pensado para que maneje los instrumentos que detallamos 
+		al principio y que contenga el loop que realiza el PID. 
+
+
+Código en Python
+
+	El código en Python fue lo primero que escribimos y lo pensamos en función de lo que se necesita para poder
+	automatizar el riego de Hidroponia.
+	Lo primero, que fijamos, como la idea es realizar un PID, definimos las constantes K y el Setpoint. Ambas pueden
+	setearse y preguntarlas desde el Python. De la misma manera creamos variables para el flujo de cada bomba por 
+	separado ya que tenían rangos distintos y una variable solo para preguntar que nos devolvía el flujo por el 
+	caudalimetro. 
+	Además de esto, como en un sistema de Hidroponia cada cierto tiempo es necesario volver a colocar minerales en el 
+	agua, nos pareció útil defnir una constante que nos permita entrar o salir del loop de control. 
+	Para las bombas se setearon límites de input, para evitar dar un valor mayor o menor a los que la bomba puede 
+	generar. 
+
+Código de Arduino: 
+
+	Primero definimos las variables globales, que son aquellas que vamos a utilizar tanto en las funciones para
+	hallar los valores que pedimos desde python como dentro del loop.
+	El código en Arduino, está pensado para que haga trabajar a las bombas y esté midiendo cada segundo el flujo
+	que pasa por el caudalimetro, todo esto dentro del loop, mientras que fuera tenemos las funciones 
+	"getter" y "setter" para comunicarnos con python y la función del PID.
+
+User Loop: 
+
+	El user loop esta compuesto por el código para mover las bombas y el código para medir el flujo del caudalimetro
+	que se van a estar corriendo constantemente, luego si la variable de control vale 1, se permite entrar en el 
+	loop que va a utilizar el PID para corregir el valor de las bombas y obtener el flujo deseado. 
+	
+
+ 

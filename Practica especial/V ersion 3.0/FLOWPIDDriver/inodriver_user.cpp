@@ -156,11 +156,14 @@ void user_loop() {
 
       if ((CtrlLoop == 1)) { //{||(setPoint - l_hour > tolerance)){
         output = computePID(l_hour);
-        if (output > 102.5) {
+        if (output > 102.5){
           output = 102.5;
         }
+        if (output < 40){
+          output = 40;
+        }
         pump_flow1=output;
-        analogWrite(ENA, (pump_flow1 + 4.60)/0.42);
+
        
        //pump_flow2=output;
       }
