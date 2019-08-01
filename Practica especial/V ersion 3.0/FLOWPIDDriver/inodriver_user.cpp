@@ -121,7 +121,6 @@ double computePID(double inp){
 // Aca empieza el loop, si la variable CtrlLoop es True (1) entra en el loop de control, y si vale False(0)no hace nada
 
 void user_loop() {
-
  // Esta primera parte del loop va a estar corriendo siempre
      currentTime = millis();
 
@@ -132,7 +131,6 @@ void user_loop() {
       PWM_Value1=(pump_flow1 + 4.60)/0.42; //esto es solo para poder cambiar de flujop a unidad de la bomba
       analogWrite(ENA, PWM_Value1);
 
-
   //MOVER MOTOR B
       digitalWrite(IN3, HIGH);
       digitalWrite(IN4, LOW);
@@ -140,15 +138,10 @@ void user_loop() {
       PWM_Value2=(pump_flow2 + 3.60)/0.3; //esto es solo para poder cambiar de flujop a unidad de la bomba
       analogWrite(ENB, PWM_Value2);
 
-//    Serial.println(l_hour, 3);
-    
-
    // Every second, calculate and print litres/hour
    if(currentTime >= (cloopTime + 1000))
    {
       cloopTime = currentTime; // Updates cloopTime
-      // Pulse frequency (Hz) = 7.5Q, Q is flow rate in L/min.
-     // l_hour = ((flow_frequency * 60 / (7.5))* (160/1353.8))*(153/247); // (Pulse frequency x 60 min) / 7.5Q = flowrate in L/hour
       
       l_hour = (0.86941 * ((flow_frequency*60/7.5) *1.7886178862/30.24556546990604)) + 65.740;
       
@@ -163,13 +156,8 @@ void user_loop() {
           output = 40;
         }
         pump_flow1=output;
-
-       
-       //pump_flow2=output;
       }
-      
    }
-  
 }
 
 
